@@ -364,6 +364,53 @@ main, header, footer { position: relative; z-index: 2; }
 .sound-toggle:active { transform: scale(0.92); }
 .sound-toggle[aria-pressed='true'] { color: var(--amber); }
 
+/* Ingredient film overlay */
+.film {
+  position: absolute; inset: 0;
+  z-index: 44;
+  background: #060404;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.film.show { opacity: 1; pointer-events: auto; }
+.film video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.film-hint {
+  position: absolute; left: 50%; bottom: 14px;
+  transform: translateX(-50%);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--cream);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* Build board tiles + finale button */
+.build-tiles {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 14px;
+}
+.build-tiles img {
+  width: 52px; height: 34px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+}
+.wrap-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: 17px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--amber);
+  background: transparent;
+  border: 1px solid rgba(255, 176, 33, 0.45);
+  border-radius: 12px;
+  padding: 0.75em 1em 0.65em;
+  transition: border-color 0.15s, color 0.15s, transform 0.1s;
+}
+.wrap-btn:hover { border-color: var(--amber); color: #ffd98a; }
+.wrap-btn:active { transform: scale(0.98); }
+
 /* Summary card */
 .summary {
   margin-top: 16px;

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { BIZ } from './config.js'
 import { ART } from './ingredients.jsx'
 import { primeAudio, slamSound, flickSound, isMuted, setMuted } from './sounds.js'
+import { CLIPS, FINALES, clipKeyFor } from './clips.js'
 
 /* ── Utilities ──────────────────────────────────────────────────────────── */
 
@@ -398,9 +399,77 @@ function Burst({ x, y, n, reduced }) {
   )
 }
 
+/* ── Ingredient film overlay ─────────────────────────────────────────────
+   Plays a Seedance clip of the tapped ingredient slamming onto the grill,
+   native audio and all, then fades back to the stack. A finale cue
+   (hold: true) stays up on its last frame until tapped. */
+
+function FilmOverlay({ cue, onActive }) {
+  const videoRef = useRef(null)
+  const [visible, setVisible] = useState(false)
+  const [held, setHeld] = useState(false)
+
+  useEffect(() => {
+    if (!cue) return
+    const v = videoRef.current
+    setHeld(false)
+    v.src = cue.src
+    v.muted = isMuted()
+    const begin = () => {
+      if (cue.startAt) v.currentTime = cue.startAt
+      const p = v.play()
+      if (p) {
+        p.catch(() => {
+          v.muted = true
+          v.play().catch(() => setVisible(false))
+        })
+      }
+    }
+    if (v.readyState >= 1) begin()
+    else v.onloadedmetadata = begin
+    const onPlaying = () => {
+      setVisible(true)
+      onActive(true)
+    }
+    const onEnded = () => {
+      if (cue.hold) setHeld(true)
+      else setVisible(false)
+      onActive(false)
+    }
+    v.addEventListener('playing', onPlaying)
+    v.addEventListener('ended', onEnded)
+    v.addEventListener('error', onEnded)
+    return () => {
+      v.removeEventListener('playing', onPlaying)
+      v.removeEventListener('ended', onEnded)
+      v.removeEventListener('error', onEnded)
+      v.onloadedmetadata = null
+    }
+  }, [cue, onActive])
+
+  const dismiss = () => {
+    setVisible(false)
+    setHeld(false)
+    const v = videoRef.current
+    if (v) v.pause()
+  }
+
+  return (
+    <div
+      className={`film${visible ? ' show' : ''}`}
+      onClick={held ? dismiss : undefined}
+      role={held ? 'button' : undefined}
+      aria-label={held ? 'Back to your build' : undefined}
+    >
+      <video ref={videoRef} playsInline preload="auto" aria-hidden="true" />
+      {held && <p className="film-hint">Tap to go back</p>}
+    </div>
+  )
+}
+
 /* ── The exploded stack ─────────────────────────────────────────────────── */
 
-function Stack({ layers, reduced, armed }) {
+function Stack({ layers, reduced, armed, filmCue, soundMuteUntil }) {
   const panelRef = useRef(null)
   const quakeElRef = useRef(null)
   const quake = useRef({ e: 0, t: 0, running: false })
@@ -440,6 +509,8 @@ function Stack({ layers, reduced, armed }) {
     leavingRef.current.delete(key)
     forceRender((x) => x + 1)
   }, [])
+
+  const onFilmActive = useCallback(() => {}, [])
 
   const bodiesRef = useRef(new Map())
   const slotMapRef = useRef(new Map())
@@ -488,7 +559,8 @@ function Stack({ layers, reduced, armed }) {
 
   const spawnBurst = useCallback(
     (imp, art, baseX, slot, key) => {
-      slamSound(art.weight, imp)
+      // A playing ingredient film carries its own impact audio
+      if (performance.now() > (soundMuteUntil?.current ?? 0)) slamSound(art.weight, imp)
       kickQuake(imp * 0.011 * art.weight)
       // Shockwave: layers above hop, layers below compress
       for (const [k, api] of bodiesRef.current) {
@@ -519,6 +591,7 @@ function Stack({ layers, reduced, armed }) {
       <div className="viz-bgword" aria-hidden="true">{BIZ.name}</div>
       <p className="viz-hint" aria-hidden="true">Your build</p>
       {BIZ.audio && <SoundToggle />}
+      <FilmOverlay cue={filmCue} onActive={onFilmActive} />
       <div className="stack-quake" ref={quakeElRef}>
         {panel.w > 0 &&
           armed &&
@@ -701,6 +774,8 @@ function Builder({ reduced }) {
   const sectionRef = useRef(null)
   const [barVisible, setBarVisible] = useState(false)
   const [armed, setArmed] = useState(false)
+  const [filmCue, setFilmCue] = useState(null)
+  const soundMuteUntil = useRef(0)
   const tabRefs = useRef({})
 
   const tab = BIZ.builder.tabs.find((t) => t.id === activeTabId)
@@ -709,20 +784,44 @@ function Builder({ reduced }) {
   const summary = buildSummary(tab, sel)
 
   const toggle = (group, item) => {
+    const cur = sel[activeTabId][group.id] || []
+    const selecting = !cur.includes(item.id)
+
+    // Cue this ingredient's film if we have it (its audio replaces the slam SFX)
+    if (selecting && item.layer && !reduced) {
+      const meatGroup = tab.groups[0]
+      const meatItem = meatGroup.items.find((i) =>
+        sel[activeTabId][meatGroup.id]?.includes(i.id)
+      )
+      const key = clipKeyFor(item.layer, meatItem?.layer)
+      const clip = key && CLIPS[key]
+      if (clip) {
+        soundMuteUntil.current = performance.now() + 4000
+        setFilmCue({ src: clip.src, nonce: Date.now() })
+      }
+    }
+
     setSel((prev) => {
-      const cur = prev[activeTabId][group.id] || []
+      const c = prev[activeTabId][group.id] || []
       let next
       if (group.pick === 'one') {
-        if (cur.includes(item.id)) return prev
+        if (c.includes(item.id)) return prev
         next = [item.id]
       } else {
-        next = cur.includes(item.id) ? cur.filter((x) => x !== item.id) : [...cur, item.id]
+        next = c.includes(item.id) ? c.filter((x) => x !== item.id) : [...c, item.id]
       }
       return {
         ...prev,
         [activeTabId]: { ...prev[activeTabId], [group.id]: next },
       }
     })
+  }
+
+  const finale = FINALES[activeTabId]
+  const wrapIt = () => {
+    if (!finale || reduced) return
+    soundMuteUntil.current = performance.now() + 9000
+    setFilmCue({ src: finale.src, startAt: finale.startAt, hold: true, nonce: Date.now() })
   }
 
   useEffect(() => {
@@ -793,7 +892,10 @@ function Builder({ reduced }) {
                 aria-controls={`panel-${t.id}`}
                 tabIndex={t.id === activeTabId ? 0 : -1}
                 onKeyDown={onTabKey}
-                onClick={() => setActiveTabId(t.id)}
+                onClick={() => {
+                  setActiveTabId(t.id)
+                  setFilmCue(null)
+                }}
               >
                 {t.label}
               </button>
@@ -828,7 +930,14 @@ function Builder({ reduced }) {
         </div>
 
         <div className="viz-wrap">
-          <Stack key={activeTabId} layers={layers} reduced={reduced} armed={armed} />
+          <Stack
+            key={activeTabId}
+            layers={layers}
+            reduced={reduced}
+            armed={armed}
+            filmCue={filmCue}
+            soundMuteUntil={soundMuteUntil}
+          />
           <div className="summary">
             <div className="summary-row">
               <div>
@@ -857,6 +966,21 @@ function Builder({ reduced }) {
                 <span className="muted">Pick a base to get going.</span>
               )}
             </p>
+            {layers.some((l) => CLIPS[l.art]?.still) && (
+              <div className="build-tiles" aria-hidden="true">
+                {layers.map(
+                  (l) =>
+                    CLIPS[l.art]?.still && (
+                      <img key={l.key} src={CLIPS[l.art].still} alt="" loading="lazy" />
+                    )
+                )}
+              </div>
+            )}
+            {finale && !reduced && (
+              <button className="wrap-btn" onClick={wrapIt}>
+                Wrap it — watch it build
+              </button>
+            )}
             <a className="call-btn" href={BIZ.phoneHref}>
               Call it through <small>{BIZ.phone}</small>
             </a>
