@@ -785,9 +785,11 @@ function Builder({ reduced }) {
 
   const toggle = (group, item) => {
     const cur = sel[activeTabId][group.id] || []
-    const selecting = !cur.includes(item.id)
+    // Selecting anything new plays its film; re-tapping a selected pick-one
+    // item replays it (tapping a selected topping still deselects, no film).
+    const selecting =
+      !cur.includes(item.id) || (group.pick === 'one' && cur.includes(item.id))
 
-    // Cue this ingredient's film if we have it (its audio replaces the slam SFX)
     if (selecting && item.layer && !reduced) {
       const meatGroup = tab.groups[0]
       const meatItem = meatGroup.items.find((i) =>
