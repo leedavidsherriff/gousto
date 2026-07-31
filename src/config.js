@@ -98,22 +98,21 @@ export const BIZ = {
       {
         id: 'burgers',
         label: 'Burgers',
-        comingSoon: true,
         groups: [
           {
             id: 'patty', label: 'The patty', pick: 'one',
             items: [
-              { id: 'smash', name: 'Smashed beef', price: 6.5, layer: 'patty' },
-              { id: 'double-smash', name: 'Double smash', price: 8.5, layer: 'patty-double' },
-              { id: 'chicken-fillet', name: 'Crispy chicken', price: 7.5, layer: 'fillet' },
-              { id: 'halloumi-stack', name: 'Halloumi stack', price: 7.0, layer: 'halloumi-patty' },
+              { id: 'smash', name: 'Smashed beef', price: 6.5, layer: 'patty', clip: 'patty' },
+              { id: 'double-smash', name: 'Double smash', price: 8.5, layer: 'patty-double', hidden: true },
+              { id: 'chicken-fillet', name: 'Crispy chicken', price: 7.5, layer: 'fillet', hidden: true },
+              { id: 'halloumi-stack', name: 'Halloumi stack', price: 7.0, layer: 'halloumi-patty', hidden: true },
             ],
           },
           {
-            id: 'bun', label: 'The bun', pick: 'one',
+            // Only toasted brioche for now — auto-included, no UI section.
+            id: 'bun', label: 'The bun', pick: 'one', hidden: true,
             items: [
               { id: 'brioche', name: 'Toasted brioche', price: 0, layer: 'BUN' },
-              { id: 'seeded', name: 'Seeded bun', price: 0, layer: 'BUN_SEEDED' },
             ],
           },
           {
@@ -122,17 +121,14 @@ export const BIZ = {
               { id: 'plain', name: 'Plain', price: 0, layer: null },
               { id: 'cheese', name: 'American cheese', price: 1.0, layer: 'cheese', clip: 'burger-cheese' },
               { id: 'cheese-salad', name: 'Cheese & salad', price: 1.75, layer: ['cheese', 'lettuce', 'tomato', 'onion'], clip: 'burger-cheese-salad' },
-              { id: 'the-works', name: 'The works', price: 3.0, layer: ['cheese', 'bacon', 'jalapenos', 'lettuce', 'tomato', 'onion'], clip: 'burger-works' },
+              { id: 'the-works', name: 'The works', price: 3.0, layer: ['cheese', 'bacon', 'jalapenos', 'lettuce', 'tomato', 'onion'], clip: 'burger-works', hidden: true },
             ],
           },
           {
-            id: 'sauce', label: 'The sauce — free', pick: 'one',
+            // Burger sauces return when their clips are shot.
+            id: 'sauce', label: 'The sauce — free', pick: 'one', hidden: true,
             items: [
               { id: 'no-sauce', name: 'No sauce', price: 0, layer: null },
-              { id: 'burger-sauce', name: 'House burger sauce', price: 0, layer: 'sauce-burger', clip: 'burger-sauce' },
-              { id: 'garlic', name: 'Garlic', price: 0, layer: 'sauce-garlic', clip: 'burger-sauce-garlic' },
-              { id: 'chilli', name: 'Chilli', price: 0, layer: 'sauce-chilli', clip: 'burger-sauce-chilli' },
-              { id: 'bbq', name: 'Smoked BBQ', price: 0, layer: 'sauce-bbq', clip: 'burger-sauce-bbq' },
             ],
           },
           {

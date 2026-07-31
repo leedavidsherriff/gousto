@@ -868,9 +868,8 @@ function Builder({ reduced }) {
         best = c.still
       }
     }
-    // Empty build on a film-covered tab rests on the bare coals, not cartoons
-    if (!best && activeTabId === 'kebabs') return SET_PLATE
-    return best
+    // Empty build rests on the bare coals, never on cartoons
+    return best ?? SET_PLATE
   }, [selectedClips, activeTabId])
 
   // ── Multi-person order ────────────────────────────────────────────────
@@ -1057,7 +1056,7 @@ function Builder({ reduced }) {
                       {summary.joinNames(summary.sauces).replace(/^./, (c) => c.toUpperCase())}
                       {summary.joinNames(summary.sauces).includes('sauce') ? '' : ' sauce'}.{' '}
                     </>
-                  ) : (
+                  ) : tab.groups.find((g) => g.id === 'sauce')?.hidden ? null : (
                     <span className="muted">No sauce — bold move. </span>
                   )}
                   {summary.extras.length > 0 && <>Plus {summary.joinNames(summary.extras)}.</>}
