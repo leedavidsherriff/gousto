@@ -690,9 +690,9 @@ const defaultSelections = () => {
     }
   }
   // a tasty-looking starting build
-  if (sel.kebabs?.salad) sel.kebabs.salad = ['lettuce', 'tomato']
-  if (sel.kebabs?.sauce) sel.kebabs.sauce = ['garlic', 'chilli']
-  if (sel.burgers?.toppings) sel.burgers.toppings = ['cheese', 'lettuce']
+  if (sel.kebabs?.salad) sel.kebabs.salad = ['salad-lt']
+  if (sel.kebabs?.sauce) sel.kebabs.sauce = ['garlic-chilli']
+  if (sel.burgers?.toppings) sel.burgers.toppings = ['cheese']
   if (sel.burgers?.sauce) sel.burgers.sauce = ['burger-sauce']
   return sel
 }
@@ -704,16 +704,19 @@ function deriveLayers(tab, sel) {
   for (const group of tab.groups) {
     for (const item of group.items) {
       if (!tabSel[group.id]?.includes(item.id) || !item.layer) continue
-      if (item.layer === 'BUN' || item.layer === 'BUN_SEEDED') {
-        out.push({ key: 'bun-bottom', art: 'bun-bottom', order: ART['bun-bottom'].order })
-        const top = item.layer === 'BUN' ? 'bun-top' : 'bun-top-seeded'
-        out.push({ key: top, art: top, order: ART[top].order })
-      } else if (item.layer === 'DOUBLE_MEAT') {
-        // resolved after the loop, needs the base meat
-        out.push({ key: 'DOUBLE_MEAT', art: 'DOUBLE_MEAT', order: 12 })
-      } else {
-        out.push({ key: item.layer, art: item.layer, order: ART[item.layer].order })
-        if (ART[item.layer].order === 10) baseMeatArt = item.layer
+      const layerIds = Array.isArray(item.layer) ? item.layer : [item.layer]
+      for (const lid of layerIds) {
+        if (lid === 'BUN' || lid === 'BUN_SEEDED') {
+          out.push({ key: 'bun-bottom', art: 'bun-bottom', order: ART['bun-bottom'].order })
+          const top = lid === 'BUN' ? 'bun-top' : 'bun-top-seeded'
+          out.push({ key: top, art: top, order: ART[top].order })
+        } else if (lid === 'DOUBLE_MEAT') {
+          // resolved after the loop, needs the base meat
+          out.push({ key: 'DOUBLE_MEAT', art: 'DOUBLE_MEAT', order: 12 })
+        } else {
+          out.push({ key: lid, art: lid, order: ART[lid].order })
+          if (ART[lid].order === 10) baseMeatArt = lid
+        }
       }
     }
   }
@@ -799,7 +802,9 @@ function Builder({ reduced }) {
       const meatItem = meatGroup.items.find((i) =>
         sel[activeTabId][meatGroup.id]?.includes(i.id)
       )
-      const key = clipKeyFor(item.layer, meatItem?.layer)
+      const key =
+        item.clip ??
+        (typeof item.layer === 'string' ? clipKeyFor(item.layer, meatItem?.layer) : null)
       const clip = key && CLIPS[key]
       if (clip) {
         soundMuteUntil.current = performance.now() + 4000
@@ -825,18 +830,35 @@ function Builder({ reduced }) {
 
   // The panel rests on the final frame of the highest chained stage selected —
   // the photoreal build "grows" as higher stages are added, no cartoons.
+  // Stage order: bread < meat < toppings/salad < sauce. Extras play their film
+  // on tap but never own the resting frame.
+  const STAGE = { bread: 0, bun: 1, meat: 2, patty: 2, salad: 3, toppings: 3, sauce: 4 }
+  const selectedClips = useMemo(() => {
+    const found = [] // { key, still, stage }
+    for (const group of tab.groups) {
+      for (const item of group.items) {
+        if (!sel[activeTabId][group.id]?.includes(item.id)) continue
+        const key =
+          item.clip ?? (typeof item.layer === 'string' ? clipKeyFor(item.layer, null) : null)
+        if (key && CLIPS[key]) {
+          found.push({ key, still: CLIPS[key].still, stage: STAGE[group.id] ?? -1 })
+        }
+      }
+    }
+    return found
+  }, [tab, sel, activeTabId])
+
   const restingStill = useMemo(() => {
     let best = null
-    let bestOrder = -1
-    for (const l of layers) {
-      const c = CLIPS[l.art]
-      if (c && ART[l.art].order >= bestOrder) {
-        bestOrder = ART[l.art].order
+    let bestStage = -1
+    for (const c of selectedClips) {
+      if (c.stage >= bestStage && c.stage >= 0) {
+        bestStage = c.stage
         best = c.still
       }
     }
     return best
-  }, [layers])
+  }, [selectedClips])
 
   const finale = FINALES[activeTabId]
   const wrapIt = () => {
@@ -988,14 +1010,11 @@ function Builder({ reduced }) {
                 <span className="muted">Pick a base to get going.</span>
               )}
             </p>
-            {layers.some((l) => CLIPS[l.art]?.still) && (
+            {selectedClips.length > 0 && (
               <div className="build-tiles" aria-hidden="true">
-                {layers.map(
-                  (l) =>
-                    CLIPS[l.art]?.still && (
-                      <img key={l.key} src={CLIPS[l.art].still} alt="" loading="lazy" />
-                    )
-                )}
+                {selectedClips.map((c) => (
+                  <img key={c.key} src={c.still} alt="" loading="lazy" />
+                ))}
               </div>
             )}
             {finale && !reduced && (
