@@ -5,13 +5,21 @@
 //
 // FINALES: the "WRAP IT" payoff. Kebabs reuse the hero loop's second half —
 // the explosion in reverse IS the kebab assembling. startAt skips to that half.
+const clip = (id) => ({ src: `clips/${id}.mp4`, still: `clips/${id}.jpg` })
+
 export const CLIPS = {
-  doner: { src: 'clips/doner.mp4', still: 'clips/doner.jpg' },
-  'sauce-garlic': { src: 'clips/sauce-garlic.mp4', still: 'clips/sauce-garlic.jpg' },
-  lettuce: { src: 'clips/lettuce.mp4', still: 'clips/lettuce.jpg' },
-  flatbread: { src: 'clips/flatbread.mp4', still: 'clips/flatbread.jpg' },
-  tomato: { src: 'clips/tomato.mp4', still: 'clips/tomato.jpg' },
-  'sauce-chilli': { src: 'clips/sauce-chilli.mp4', still: 'clips/sauce-chilli.jpg' },
+  flatbread: clip('flatbread'),
+  doner: clip('doner'),
+  lettuce: clip('lettuce'),
+  tomato: clip('tomato'),
+  onion: clip('onion'),
+  cabbage: clip('cabbage'),
+  chillies: clip('chillies'),
+  halloumi: clip('halloumi'),
+  'sauce-garlic': clip('sauce-garlic'),
+  'sauce-chilli': clip('sauce-chilli'),
+  'sauce-mint': clip('sauce-mint'),
+  'sauce-bbq': clip('sauce-bbq'),
 }
 
 export const FINALES = {
