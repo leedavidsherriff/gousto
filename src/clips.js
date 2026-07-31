@@ -9,6 +9,9 @@ export const CLIPS = {
   doner: { src: 'clips/doner.mp4', still: 'clips/doner.jpg' },
   'sauce-garlic': { src: 'clips/sauce-garlic.mp4', still: 'clips/sauce-garlic.jpg' },
   lettuce: { src: 'clips/lettuce.mp4', still: 'clips/lettuce.jpg' },
+  flatbread: { src: 'clips/flatbread.mp4', still: 'clips/flatbread.jpg' },
+  tomato: { src: 'clips/tomato.mp4', still: 'clips/tomato.jpg' },
+  'sauce-chilli': { src: 'clips/sauce-chilli.mp4', still: 'clips/sauce-chilli.jpg' },
 }
 
 export const FINALES = {
