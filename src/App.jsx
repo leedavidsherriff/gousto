@@ -469,7 +469,7 @@ function FilmOverlay({ cue, onActive }) {
 
 /* ── The exploded stack ─────────────────────────────────────────────────── */
 
-function Stack({ layers, reduced, armed, filmCue, soundMuteUntil, restingStill }) {
+function Stack({ layers, reduced, armed, filmCue, soundMuteUntil, restingStill, price }) {
   const panelRef = useRef(null)
   const quakeElRef = useRef(null)
   const quake = useRef({ e: 0, t: 0, running: false })
@@ -592,6 +592,11 @@ function Stack({ layers, reduced, armed, filmCue, soundMuteUntil, restingStill }
       <p className="viz-hint" aria-hidden="true">Your build</p>
       {BIZ.audio && <SoundToggle />}
       <FilmOverlay cue={filmCue} onActive={onFilmActive} />
+      {price != null && (
+        <div className="viz-price" aria-hidden="true">
+          <AnimatedPrice value={price} reduced={reduced} />
+        </div>
+      )}
       {restingStill && (
         <img key={restingStill} className="rest-frame" src={restingStill} alt="" />
       )}
@@ -1128,6 +1133,7 @@ function Builder({ reduced }) {
             filmCue={filmCue}
             soundMuteUntil={soundMuteUntil}
             restingStill={restingStill}
+            price={total}
           />
           <div className="summary">
             <div className="summary-row">
