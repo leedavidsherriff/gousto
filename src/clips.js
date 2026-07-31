@@ -34,7 +34,7 @@ export const CLIPS = {
 
 export const FINALES = {
   kebabs: { src: 'hero-loop.mp4', startAt: 8.05 },
-  burgers: null, // clips/burger-finale.mp4 once generated
+  burgers: { src: 'clips/burger-finale.mp4' },
 }
 
 // The empty-grill set plate — resting poster for the film panel.
