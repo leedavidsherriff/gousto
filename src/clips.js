@@ -9,6 +9,7 @@ const clip = (id) => ({ src: `clips/${id}.mp4`, still: `clips/${id}.jpg` })
 
 export const CLIPS = {
   'sauce-garlic-chilli': clip('sauce-garlic-chilli'),
+  'salad-lt': clip('salad-lt'),
   'salad-full': clip('salad-full'),
   'salad-works': clip('salad-works'),
   flatbread: clip('flatbread'),
