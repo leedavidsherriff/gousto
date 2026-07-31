@@ -435,6 +435,7 @@ function FilmOverlay({ cue, onActive }) {
       if (cue.hold) setHeld(true)
       else setVisible(false)
       onActive(false)
+      cue.onDone?.()
     }
     v.addEventListener('playing', onPlaying)
     v.addEventListener('ended', onEnded)
@@ -918,10 +919,25 @@ function Builder({ reduced }) {
   }
 
   const finale = FINALES[activeTabId]
-  const wrapIt = () => {
-    if (!finale || reduced) return
-    soundMuteUntil.current = performance.now() + 9000
-    setFilmCue({ src: finale.src, startAt: finale.startAt, hold: true, nonce: Date.now() })
+
+  // One gesture: the finale plays (your build assembling), then the item
+  // banks into the order and you're back on the menu for the next person.
+  const addToOrderRef = useRef(null)
+  addToOrderRef.current = addToOrder
+  const wrapAndAdd = () => {
+    if (!summary.base) return
+    primeAudio()
+    if (finale && !reduced) {
+      soundMuteUntil.current = performance.now() + 9000
+      setFilmCue({
+        src: finale.src,
+        startAt: finale.startAt,
+        nonce: Date.now(),
+        onDone: () => addToOrderRef.current?.(),
+      })
+    } else {
+      addToOrder()
+    }
   }
 
   // ── Kiosk flow: menu of products → dedicated build page ─────────────────
@@ -1172,13 +1188,8 @@ function Builder({ reduced }) {
                 ))}
               </div>
             )}
-            {finale && !reduced && (
-              <button className="wrap-btn" onClick={wrapIt}>
-                Wrap it — watch it build
-              </button>
-            )}
-            <button className="add-btn" onClick={addToOrder} disabled={!summary.base}>
-              + Add to order{summary.base ? ` — ${gbp(total)}` : ''}
+            <button className="add-btn" onClick={wrapAndAdd} disabled={!summary.base}>
+              Wrap it{summary.base ? ` — add to order · ${gbp(total)}` : ''}
             </button>
 
             {order.length > 0 && (
@@ -1241,11 +1252,11 @@ function Builder({ reduced }) {
         </div>
         <button
           className="bar-add"
-          onClick={addToOrder}
+          onClick={wrapAndAdd}
           disabled={!summary.base}
           tabIndex={barVisible ? 0 : -1}
         >
-          + Add
+          Wrap it
         </button>
         <a href={BIZ.phoneHref} tabIndex={barVisible ? 0 : -1}>
           Call
