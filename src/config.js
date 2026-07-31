@@ -58,11 +58,10 @@ export const BIZ = {
             ],
           },
           {
-            id: 'bread', label: 'The bread', pick: 'one',
+            // Only flatbread on the menu for now — auto-included, no UI section.
+            id: 'bread', label: 'The bread', pick: 'one', hidden: true,
             items: [
-              { id: 'flatbread', name: 'Flatbread', price: 0, layer: 'flatbread' },
-              { id: 'pitta', name: 'Pitta', price: 0, layer: 'pitta' },
-              { id: 'naan', name: 'Fresh naan', price: 1.0, layer: 'naan' },
+              { id: 'flatbread', name: 'Flatbread', price: 0, layer: 'flatbread', clip: 'flatbread' },
             ],
           },
           {

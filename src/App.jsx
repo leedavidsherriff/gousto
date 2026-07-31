@@ -889,10 +889,12 @@ function Builder({ reduced }) {
       ...o,
       { id: Date.now(), text: summary.text, total, tabLabel: tab.label.replace(/s$/, '') },
     ])
-    // clear the builder for the next person
+    // clear the builder for the next person (hidden groups stay auto-included)
     setSel((prev) => ({
       ...prev,
-      [activeTabId]: Object.fromEntries(tab.groups.map((g) => [g.id, []])),
+      [activeTabId]: Object.fromEntries(
+        tab.groups.map((g) => [g.id, g.hidden ? [g.items[0].id] : []])
+      ),
     }))
     setFilmCue(null)
   }
@@ -998,7 +1000,7 @@ function Builder({ reduced }) {
           </div>
 
           <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`}>
-            {tab.groups.map((group) => (
+            {tab.groups.filter((g) => !g.hidden).map((group) => (
               <fieldset className="group" key={group.id} style={{ border: 0 }}>
                 <legend className="group-label">{group.label}</legend>
                 <div className="opts">
