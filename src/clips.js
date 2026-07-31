@@ -8,8 +8,9 @@
 const clip = (id) => ({ src: `clips/${id}.mp4`, still: `clips/${id}.jpg` })
 
 export const CLIPS = {
-  // TEMP placeholder until the real garlic & chilli double-drizzle is shot:
-  'sauce-garlic-chilli': clip('sauce-chilli'),
+  'sauce-garlic-chilli': clip('sauce-garlic-chilli'),
+  'salad-full': clip('salad-full'),
+  'salad-works': clip('salad-works'),
   flatbread: clip('flatbread'),
   doner: clip('doner'),
   lettuce: clip('lettuce'),
