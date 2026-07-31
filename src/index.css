@@ -231,6 +231,60 @@ main, header, footer { position: relative; z-index: 2; }
   align-items: start;
 }
 
+/* Menu screen — kiosk cards */
+.menu-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.product-card {
+  position: relative;
+  display: block;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--panel);
+  transition: border-color 0.15s, transform 0.12s ease;
+}
+.product-card:hover { border-color: rgba(255, 176, 33, 0.6); transform: translateY(-2px); }
+.product-card:active { transform: scale(0.98); }
+.product-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.pc-meta {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 12px 14px 14px;
+}
+.pc-tag {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--smoke);
+}
+.pc-name { font-size: 19px; letter-spacing: 0.03em; color: var(--cream); flex: 1; }
+.pc-price { font-family: var(--font-display); font-size: 19px; color: var(--amber); }
+.order-panel { margin-top: 22px; max-width: 640px; }
+
+/* Build screen top bar */
+.build-topbar {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px;
+}
+.back-btn {
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--smoke);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.back-btn:hover { color: var(--amber); border-color: rgba(255, 176, 33, 0.5); }
+.build-chosen { font-size: clamp(20px, 2.6vw, 26px); color: var(--cream); letter-spacing: 0.03em; }
+
 /* Tabs */
 .tabs { display: flex; gap: 10px; margin-bottom: 22px; }
 .tab {

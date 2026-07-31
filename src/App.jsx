@@ -790,6 +790,7 @@ function Builder({ reduced }) {
   const sectionRef = useRef(null)
   const [barVisible, setBarVisible] = useState(false)
   const [armed, setArmed] = useState(false)
+  const [screen, setScreen] = useState('menu') // 'menu' | 'build'
   const [filmCue, setFilmCue] = useState(null)
   const [order, setOrder] = useState([])
   const [copied, setCopied] = useState(false)
@@ -892,6 +893,8 @@ function Builder({ reduced }) {
       ),
     }))
     setFilmCue(null)
+    setScreen('menu')
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const removeFromOrder = (id) => setOrder((o) => o.filter((x) => x.id !== id))
@@ -914,6 +917,57 @@ function Builder({ reduced }) {
     if (!finale || reduced) return
     soundMuteUntil.current = performance.now() + 9000
     setFilmCue({ src: finale.src, startAt: finale.startAt, hold: true, nonce: Date.now() })
+  }
+
+  // ── Kiosk flow: menu of products → dedicated build page ─────────────────
+  const menuCards = useMemo(() => {
+    const cards = []
+    for (const t of BIZ.builder.tabs) {
+      if (t.comingSoon) continue
+      for (const item of t.groups[0].items) {
+        if (item.hidden) continue
+        const key = item.clip ?? (typeof item.layer === 'string' ? item.layer : null)
+        cards.push({
+          tabId: t.id,
+          tabLabel: t.label.replace(/s$/, ''),
+          item,
+          still: (key && CLIPS[key]?.still) || SET_PLATE,
+        })
+      }
+    }
+    return cards
+  }, [])
+
+  const selectProduct = (card) => {
+    primeAudio()
+    const t = BIZ.builder.tabs.find((x) => x.id === card.tabId)
+    setActiveTabId(card.tabId)
+    setSel((prev) => ({
+      ...prev,
+      [card.tabId]: Object.fromEntries(
+        t.groups.map((g, gi) => [
+          g.id,
+          gi === 0 ? [card.item.id] : g.hidden ? [g.items[0].id] : [],
+        ])
+      ),
+    }))
+    setScreen('build')
+    if (!reduced) {
+      const key =
+        card.item.clip ?? (typeof card.item.layer === 'string' ? card.item.layer : null)
+      const clip = key && CLIPS[key]
+      if (clip) {
+        soundMuteUntil.current = performance.now() + 4000
+        setFilmCue({ src: clip.src, nonce: Date.now() })
+      }
+    }
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const backToMenu = () => {
+    setScreen('menu')
+    setFilmCue(null)
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   useEffect(() => {
@@ -970,38 +1024,76 @@ function Builder({ reduced }) {
         </p>
       </div>
 
+      {screen === 'menu' ? (
+        <div className="menu-screen">
+          <div className="menu-cards">
+            {menuCards.map((c) => (
+              <button
+                key={`${c.tabId}-${c.item.id}`}
+                className="product-card"
+                onClick={() => selectProduct(c)}
+              >
+                <img src={c.still} alt="" loading="lazy" />
+                <span className="pc-meta">
+                  <span className="pc-tag">{c.tabLabel}</span>
+                  <span className="pc-name display">{c.item.name}</span>
+                  <span className="pc-price">{gbp(c.item.price)}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+          {order.length > 0 && (
+            <div className="summary order-panel">
+              <div className="order-list">
+                <p className="summary-label">Your order</p>
+                <ul>
+                  {order.map((o, i) => (
+                    <li className="order-row" key={o.id}>
+                      <span className="order-num">{i + 1}</span>
+                      <span className="order-text">
+                        <strong>{o.tabLabel}</strong> — {o.text}
+                      </span>
+                      <span className="order-price">{gbp(o.total)}</span>
+                      <button
+                        className="order-remove"
+                        aria-label={`Remove item ${i + 1}`}
+                        onClick={() => removeFromOrder(o.id)}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <div className="order-grand">
+                  <span>Order total</span>
+                  <AnimatedPrice value={orderTotal} className="order-grand-num" reduced={reduced} />
+                </div>
+                <button className="copy-btn" onClick={copyOrder}>
+                  {copied ? 'Copied ✓' : 'Copy order — text it ahead'}
+                </button>
+              </div>
+              <a className="call-btn" href={BIZ.phoneHref}>
+                Call it through <small>{BIZ.phone}</small>
+              </a>
+            </div>
+          )}
+        </div>
+      ) : (
       <div className="builder-grid">
         <div>
-          <div className="tabs" role="tablist" aria-label="Kebabs or burgers">
-            {BIZ.builder.tabs.map((t) =>
-              t.comingSoon ? (
-                <span key={t.id} className="tab soon" aria-disabled="true">
-                  {t.label} <small>soon</small>
-                </span>
-              ) : (
-                <button
-                  key={t.id}
-                  ref={(el) => (tabRefs.current[t.id] = el)}
-                  className="tab"
-                  role="tab"
-                  id={`tab-${t.id}`}
-                  aria-selected={t.id === activeTabId}
-                  aria-controls={`panel-${t.id}`}
-                  tabIndex={t.id === activeTabId ? 0 : -1}
-                  onKeyDown={onTabKey}
-                  onClick={() => {
-                    setActiveTabId(t.id)
-                    setFilmCue(null)
-                  }}
-                >
-                  {t.label}
-                </button>
-              )
+          <div className="build-topbar">
+            <button className="back-btn" onClick={backToMenu}>
+              ← Menu
+            </button>
+            {summary.base && (
+              <span className="build-chosen display">{summary.base.name}</span>
             )}
           </div>
 
-          <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`}>
-            {tab.groups.filter((g) => !g.hidden).map((group) => (
+          <div role="tabpanel" id={`panel-${tab.id}`}>
+            {tab.groups
+              .filter((g) => !g.hidden && g.id !== tab.groups[0].id)
+              .map((group) => (
               <fieldset className="group" key={group.id} style={{ border: 0 }}>
                 <legend className="group-label">{group.label}</legend>
                 <div className="opts">
@@ -1126,6 +1218,7 @@ function Builder({ reduced }) {
           </div>
         </div>
       </div>
+      )}
 
       <div className={`sticky-bar${barVisible ? ' show' : ''}`} aria-hidden={!barVisible}>
         <div>
