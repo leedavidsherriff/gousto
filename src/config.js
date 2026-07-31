@@ -102,7 +102,7 @@ export const BIZ = {
           {
             id: 'patty', label: 'The patty', pick: 'one',
             items: [
-              { id: 'smash', name: 'The Esplanade Smash', desc: 'Smashed beef burger', price: 6.5, layer: 'patty', clip: 'patty' },
+              { id: 'smash', name: 'The Esplanade Smash', desc: 'Smashed beef burger', price: 6.5, layer: 'patty', clip: 'patty', cardStill: 'clips/burger-finale.jpg' },
               { id: 'double-smash', name: 'The Two-Storey', desc: 'Double smash burger', price: 8.5, layer: 'patty-double', hidden: true },
               { id: 'chicken-fillet', name: 'The Crispy Bird', desc: 'Crispy chicken burger', price: 7.5, layer: 'fillet', hidden: true },
               { id: 'halloumi-stack', name: 'The Squeaky Stack', desc: 'Halloumi burger', price: 7.0, layer: 'halloumi-patty', hidden: true },

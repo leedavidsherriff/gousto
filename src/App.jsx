@@ -952,7 +952,7 @@ function Builder({ reduced }) {
           tabId: t.id,
           tabLabel: t.label.replace(/s$/, ''),
           item,
-          still: (key && CLIPS[key]?.still) || SET_PLATE,
+          still: item.cardStill || (key && CLIPS[key]?.still) || SET_PLATE,
         })
       }
     }
