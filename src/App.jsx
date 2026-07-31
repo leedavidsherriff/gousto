@@ -1040,9 +1040,11 @@ function Builder({ reduced }) {
               >
                 <img src={c.still} alt="" loading="lazy" />
                 <span className="pc-meta">
-                  <span className="pc-tag">{c.tabLabel}</span>
-                  <span className="pc-name display">{c.item.name}</span>
-                  <span className="pc-price">{gbp(c.item.price)}</span>
+                  <span className="pc-top">
+                    <span className="pc-name display">{c.item.name}</span>
+                    <span className="pc-price">{gbp(c.item.price)}</span>
+                  </span>
+                  <span className="pc-desc">{c.item.desc || c.tabLabel}</span>
                 </span>
               </button>
             ))}

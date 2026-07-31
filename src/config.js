@@ -51,10 +51,10 @@ export const BIZ = {
           {
             id: 'meat', label: 'The meat', pick: 'one',
             items: [
-              { id: 'lamb-doner', name: 'Lamb doner', price: 6.5, layer: 'doner' },
-              { id: 'chicken-doner', name: 'Chicken doner', price: 7.0, layer: 'chicken' },
-              { id: 'lamb-shish', name: 'Lamb shish', price: 9.0, layer: 'shish', hidden: true },
-              { id: 'mixed-doner', name: 'Mixed doner', price: 8.5, layer: 'mixed' },
+              { id: 'lamb-doner', name: 'The Gousto Original', desc: 'Flame-cut lamb doner', price: 6.5, layer: 'doner' },
+              { id: 'chicken-doner', name: 'The Firebird', desc: 'Chicken doner', price: 7.0, layer: 'chicken' },
+              { id: 'lamb-shish', name: 'The Charcoal King', desc: 'Lamb shish', price: 9.0, layer: 'shish', hidden: true },
+              { id: 'mixed-doner', name: 'The Double Act', desc: 'Lamb & chicken, mixed', price: 8.5, layer: 'mixed' },
             ],
           },
           {
@@ -87,9 +87,9 @@ export const BIZ = {
           {
             id: 'extras', label: 'Do it properly', pick: 'many',
             items: [
-              { id: 'halloumi', name: 'Grilled halloumi', price: 1.5, layer: 'halloumi', clip: 'halloumi' },
-              { id: 'double-meat', name: 'Double meat', price: 2.5, layer: 'DOUBLE_MEAT' },
-              { id: 'meal-deal', name: 'Meal deal — chips & a can', price: 3.0, layer: null },
+              { id: 'halloumi', name: 'Squeaky cheese — grilled halloumi', price: 1.5, layer: 'halloumi', clip: 'halloumi' },
+              { id: 'double-meat', name: 'Go heavy — double meat', price: 2.5, layer: 'DOUBLE_MEAT' },
+              { id: 'meal-deal', name: 'The late shift — chips & a can', price: 3.0, layer: null },
               { id: 'cheesy-chips', name: 'Cheesy chips', price: 3.5, layer: null },
             ],
           },
@@ -102,10 +102,10 @@ export const BIZ = {
           {
             id: 'patty', label: 'The patty', pick: 'one',
             items: [
-              { id: 'smash', name: 'Smashed beef', price: 6.5, layer: 'patty', clip: 'patty' },
-              { id: 'double-smash', name: 'Double smash', price: 8.5, layer: 'patty-double', hidden: true },
-              { id: 'chicken-fillet', name: 'Crispy chicken', price: 7.5, layer: 'fillet', hidden: true },
-              { id: 'halloumi-stack', name: 'Halloumi stack', price: 7.0, layer: 'halloumi-patty', hidden: true },
+              { id: 'smash', name: 'The Esplanade Smash', desc: 'Smashed beef burger', price: 6.5, layer: 'patty', clip: 'patty' },
+              { id: 'double-smash', name: 'The Two-Storey', desc: 'Double smash burger', price: 8.5, layer: 'patty-double', hidden: true },
+              { id: 'chicken-fillet', name: 'The Crispy Bird', desc: 'Crispy chicken burger', price: 7.5, layer: 'fillet', hidden: true },
+              { id: 'halloumi-stack', name: 'The Squeaky Stack', desc: 'Halloumi burger', price: 7.0, layer: 'halloumi-patty', hidden: true },
             ],
           },
           {
@@ -118,10 +118,10 @@ export const BIZ = {
           {
             id: 'toppings', label: 'The build', pick: 'one',
             items: [
-              { id: 'plain', name: 'Plain', price: 0, layer: null },
-              { id: 'cheese', name: 'American cheese', price: 1.0, layer: 'cheese', clip: 'burger-cheese' },
-              { id: 'cheese-salad', name: 'Cheese & salad', price: 1.75, layer: ['cheese', 'lettuce', 'tomato', 'onion'], clip: 'burger-cheese-salad' },
-              { id: 'the-works', name: 'The works', price: 3.0, layer: ['cheese', 'bacon', 'jalapenos', 'lettuce', 'tomato', 'onion'], clip: 'burger-works' },
+              { id: 'plain', name: 'Straight up', price: 0, layer: null },
+              { id: 'cheese', name: 'The melt — American cheese', price: 1.0, layer: 'cheese', clip: 'burger-cheese' },
+              { id: 'cheese-salad', name: 'Dressed — cheese & salad', price: 1.75, layer: ['cheese', 'lettuce', 'tomato', 'onion'], clip: 'burger-cheese-salad' },
+              { id: 'the-works', name: 'The lot — cheese, bacon, the works', price: 3.0, layer: ['cheese', 'bacon', 'jalapenos', 'lettuce', 'tomato', 'onion'], clip: 'burger-works' },
             ],
           },
           {
