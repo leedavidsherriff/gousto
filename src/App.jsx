@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { BIZ } from './config.js'
 import { ART } from './ingredients.jsx'
 import { primeAudio, slamSound, flickSound, isMuted, setMuted } from './sounds.js'
-import { CLIPS, FINALES, clipKeyFor } from './clips.js'
+import { CLIPS, FINALES, SET_PLATE, clipKeyFor } from './clips.js'
 
 /* ── Utilities ──────────────────────────────────────────────────────────── */
 
@@ -759,10 +759,23 @@ function buildSummary(tab, sel) {
   const base = picked(tab.groups[0].id)[0]
   const bread = picked(tab.groups[1].id)[0]
   const topGroup = tab.groups[2]
-  const tops = picked(topGroup.id)
-  const sauces = picked('sauce')
+  const tops = picked(topGroup.id).filter((i) => i.layer)
+  const sauces = picked('sauce').filter((i) => i.layer)
   const extras = picked('extras')
-  return { base, bread, tops, sauces, extras, joinNames }
+
+  let text = ''
+  if (base) {
+    text = base.name
+    if (bread) text += ` on ${soften(bread.name)}`
+    if (tops.length) text += ` with ${joinNames(tops)}`
+    text += '.'
+    if (sauces.length) {
+      const s = joinNames(sauces)
+      text += ` ${s.charAt(0).toUpperCase()}${s.slice(1)}${s.includes('sauce') ? '' : ' sauce'}.`
+    }
+    if (extras.length) text += ` Plus ${joinNames(extras)}.`
+  }
+  return { base, bread, tops, sauces, extras, joinNames, text }
 }
 
 function computeTotal(tab, sel) {
@@ -782,6 +795,8 @@ function Builder({ reduced }) {
   const [barVisible, setBarVisible] = useState(false)
   const [armed, setArmed] = useState(false)
   const [filmCue, setFilmCue] = useState(null)
+  const [order, setOrder] = useState([])
+  const [copied, setCopied] = useState(false)
   const soundMuteUntil = useRef(0)
   const tabRefs = useRef({})
 
@@ -857,8 +872,45 @@ function Builder({ reduced }) {
         best = c.still
       }
     }
+    // Empty build on a film-covered tab rests on the bare coals, not cartoons
+    if (!best && activeTabId === 'kebabs') return SET_PLATE
     return best
-  }, [selectedClips])
+  }, [selectedClips, activeTabId])
+
+  // ── Multi-person order ────────────────────────────────────────────────
+  const orderTotal = order.reduce((s, o) => s + o.total, 0)
+  const runningTotal = orderTotal + total
+
+  const addToOrder = () => {
+    if (!summary.base) return
+    primeAudio()
+    slamSound(1.1, 1900)
+    setOrder((o) => [
+      ...o,
+      { id: Date.now(), text: summary.text, total, tabLabel: tab.label.replace(/s$/, '') },
+    ])
+    // clear the builder for the next person
+    setSel((prev) => ({
+      ...prev,
+      [activeTabId]: Object.fromEntries(tab.groups.map((g) => [g.id, []])),
+    }))
+    setFilmCue(null)
+  }
+
+  const removeFromOrder = (id) => setOrder((o) => o.filter((x) => x.id !== id))
+
+  const orderText = () => {
+    const rows = order.map((o, i) => `${i + 1}. ${o.text} — ${gbp(o.total)}`)
+    if (summary.base) rows.push(`${order.length + 1}. ${summary.text} — ${gbp(total)}`)
+    return `GOUSTO order:\n${rows.join('\n')}\nTotal: ${gbp(runningTotal)}`
+  }
+
+  const copyOrder = () => {
+    navigator.clipboard?.writeText(orderText()).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   const finale = FINALES[activeTabId]
   const wrapIt = () => {
@@ -1022,6 +1074,49 @@ function Builder({ reduced }) {
                 Wrap it — watch it build
               </button>
             )}
+            <button className="add-btn" onClick={addToOrder} disabled={!summary.base}>
+              + Add to order{summary.base ? ` — ${gbp(total)}` : ''}
+            </button>
+
+            {order.length > 0 && (
+              <div className="order-list">
+                <p className="summary-label">Your order</p>
+                <ul>
+                  {order.map((o, i) => (
+                    <li className="order-row" key={o.id}>
+                      <span className="order-num">{i + 1}</span>
+                      <span className="order-text">
+                        <strong>{o.tabLabel}</strong> — {o.text}
+                      </span>
+                      <span className="order-price">{gbp(o.total)}</span>
+                      <button
+                        className="order-remove"
+                        aria-label={`Remove item ${i + 1}`}
+                        onClick={() => removeFromOrder(o.id)}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                  {summary.base && (
+                    <li className="order-row building" aria-hidden="true">
+                      <span className="order-num">{order.length + 1}</span>
+                      <span className="order-text muted">Building now…</span>
+                      <span className="order-price">{gbp(total)}</span>
+                      <span />
+                    </li>
+                  )}
+                </ul>
+                <div className="order-grand">
+                  <span>Order total</span>
+                  <AnimatedPrice value={runningTotal} className="order-grand-num" reduced={reduced} />
+                </div>
+                <button className="copy-btn" onClick={copyOrder}>
+                  {copied ? 'Copied ✓' : 'Copy order — text it ahead'}
+                </button>
+              </div>
+            )}
+
             <a className="call-btn" href={BIZ.phoneHref}>
               Call it through <small>{BIZ.phone}</small>
             </a>
@@ -1031,11 +1126,25 @@ function Builder({ reduced }) {
 
       <div className={`sticky-bar${barVisible ? ' show' : ''}`} aria-hidden={!barVisible}>
         <div>
-          <p className="lbl">Your total</p>
-          <AnimatedPrice value={total} className="tot" reduced={reduced} />
+          <p className="lbl">
+            {order.length > 0
+              ? `Order · ${order.length + (summary.base ? 1 : 0)} item${
+                  order.length + (summary.base ? 1 : 0) === 1 ? '' : 's'
+                }`
+              : 'Your total'}
+          </p>
+          <AnimatedPrice value={runningTotal} className="tot" reduced={reduced} />
         </div>
+        <button
+          className="bar-add"
+          onClick={addToOrder}
+          disabled={!summary.base}
+          tabIndex={barVisible ? 0 : -1}
+        >
+          + Add
+        </button>
         <a href={BIZ.phoneHref} tabIndex={barVisible ? 0 : -1}>
-          Call to order
+          Call
         </a>
       </div>
     </section>
