@@ -469,7 +469,7 @@ function FilmOverlay({ cue, onActive }) {
 
 /* ── The exploded stack ─────────────────────────────────────────────────── */
 
-function Stack({ layers, reduced, armed, filmCue, soundMuteUntil }) {
+function Stack({ layers, reduced, armed, filmCue, soundMuteUntil, restingStill }) {
   const panelRef = useRef(null)
   const quakeElRef = useRef(null)
   const quake = useRef({ e: 0, t: 0, running: false })
@@ -592,9 +592,13 @@ function Stack({ layers, reduced, armed, filmCue, soundMuteUntil }) {
       <p className="viz-hint" aria-hidden="true">Your build</p>
       {BIZ.audio && <SoundToggle />}
       <FilmOverlay cue={filmCue} onActive={onFilmActive} />
+      {restingStill && (
+        <img key={restingStill} className="rest-frame" src={restingStill} alt="" />
+      )}
       <div className="stack-quake" ref={quakeElRef}>
         {panel.w > 0 &&
           armed &&
+          !restingStill &&
           [
             ...layers.map((l, i) => ({ ...l, leaving: false, i })),
             ...[...leavingRef.current.values()].map((l) => ({ ...l, leaving: true, i: 0 })),
@@ -819,6 +823,21 @@ function Builder({ reduced }) {
     })
   }
 
+  // The panel rests on the final frame of the highest chained stage selected —
+  // the photoreal build "grows" as higher stages are added, no cartoons.
+  const restingStill = useMemo(() => {
+    let best = null
+    let bestOrder = -1
+    for (const l of layers) {
+      const c = CLIPS[l.art]
+      if (c && ART[l.art].order >= bestOrder) {
+        bestOrder = ART[l.art].order
+        best = c.still
+      }
+    }
+    return best
+  }, [layers])
+
   const finale = FINALES[activeTabId]
   const wrapIt = () => {
     if (!finale || reduced) return
@@ -939,6 +958,7 @@ function Builder({ reduced }) {
             armed={armed}
             filmCue={filmCue}
             soundMuteUntil={soundMuteUntil}
+            restingStill={restingStill}
           />
           <div className="summary">
             <div className="summary-row">

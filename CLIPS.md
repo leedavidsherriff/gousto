@@ -110,7 +110,11 @@ A thick ribbon of fiery red chilli sauce pours down from the darkness above onto
 ```
 
 **16 · sauce-mint v2** — same as 14 with: `pale green mint yoghurt sauce`
-**17 · sauce-bbq v2** — same as 14 with: `dark smoked BBQ sauce`
+
+**17 · sauce-bbq v3** — FIXED: no salad mention (v2 hallucinated lettuce under the meat)
+```
+A thick ribbon of dark smoked BBQ sauce pours down from the darkness above onto the pile of doner meat on the flatbread, drizzling side to side in a zigzag across the meat before the stream snaps off, the sauce settling glossy and catching the ember light. The meat and bread stay beneath, nothing else appears. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no salad, no text. AUDIO: a soft thick drizzle and a wet settle over a faint sizzle, no music, no voices.
+```
 
 ## Burgers (chain: bun → patty → toppings)
 
