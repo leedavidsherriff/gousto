@@ -1,179 +1,124 @@
-# GOUSTO ingredient clips — Seedance prompt pack
+# GOUSTO ingredient clips — chained Seedance prompt pack (v2)
 
-Every builder ingredient gets a short film: it drops out of the dark and slams onto the
-empty grill, same set as the hero. The site plays the clip the moment that ingredient
-is tapped, native audio and all.
+The build now CHAINS: each stage's clip starts from the final frame of the stage below,
+so meat slams **onto the bread**, salad rains **onto the meat**, sauce pours **over the lot**.
+Claude extracts each bed frame from your clips and uploads it to your Higgsfield library —
+you just pick the named bed as the start frame.
 
-## How to run these (in the Higgsfield app, on your unlimited)
+## Workflow
 
-- **Model:** Seedance 2.0 · **1080p** · std · **16:9** · shortest duration (4–5s) · **audio ON**
-- **Start frame — every single clip:** the *empty grill* still (the hero set with no food —
-  it's in your assets, generated tonight; job `ffa71736-f3a5-4c9e-bbfa-ef3062ea1d71`)
-- Run them in any order. **No renaming needed** — bulk-download everything to `~/Downloads`
-  and Claude identifies each clip by its content, trims, compresses and wires it in.
-- Do the first three (doner, lettuce, garlic sauce) as a look test before the marathon.
+1. **Stage 0 — on the bare grill** (start frame: the *empty grill* still): breads + bun. ✅ flatbread done.
+2. **Stage 1 — onto the bread** (start frame: `gousto-bed-1-bread`, in your library now): the four meats.
+   → After the **lamb doner** one lands, Claude extracts `gousto-bed-2-meat` and uploads it.
+3. **Stage 2 — onto the meat** (start frame: `gousto-bed-2-meat`): all salads + kebab sauces.
+4. **Burgers chain the same way**: bun-bottom (grill) → patties (onto bun, `gousto-bed-B1-bun`) →
+   toppings & burger sauce (onto patty, `gousto-bed-B2-patty`).
+5. Finale #28 unchanged.
 
-Every prompt ends with the same set lock:
+Settings every time: **Seedance 2.0 · 1080p · std · 16:9 · 4–5s · audio ON.**
+Bulk-download to `~/Downloads`, no renaming — Claude identifies clips by content.
 
-> Locked-off camera, absolutely no camera movement. The near-black charcoal background stays
-> dark; the warm ember glow under the grate flares once on impact then settles; a few tiny
-> ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium
-> editorial food film. Nothing else enters frame — no hands, no props, no text.
+Already shot & live (no redo needed): flatbread ✅. The six v1 clips stay in use until their
+chained v2 replaces them (doner, lettuce, tomato, garlic, chilli want v2 re-runs on their beds).
 
 ---
 
-## Kebabs — meats
+## Stage 0 — bare grill (start frame: empty grill still)
 
-**1 · doner (lamb doner)**
-```
-A generous heap of flame-cut lamb doner ribbons falls from the darkness above and slams down onto the centre of the empty scorched grill grate — crispy-edged brown ribbons tumbling and settling into a pile, one deep heavy impact. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep meaty slam with low-end punch, a short fat sizzle as the meat hits the hot grate, faint charcoal crackle, no music, no voices.
-```
-
-**2 · chicken (chicken doner)**
-```
-A generous heap of golden chicken doner ribbons falls from the darkness above and slams down onto the centre of the empty scorched grill grate — glistening golden-brown ribbons tumbling and settling into a pile, one heavy impact. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep meaty slam, a bright sizzle as the chicken hits the hot grate, faint charcoal crackle, no music, no voices.
-```
-
-**3 · shish (lamb shish)**
-```
-Five fat cubes of charred lamb shish drop from the darkness above and slam onto the centre of the empty scorched grill grate one after another in under a second — dark char-edged cubes bouncing once and settling in a rough line. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a rapid drumroll of five heavy meaty thuds, a short sizzle, faint charcoal crackle, no music, no voices.
-```
-
-**4 · mixed (mixed doner)**
-```
-A heap of mixed doner ribbons — dark flame-cut lamb tangled with golden chicken — falls from the darkness above and slams down onto the centre of the empty scorched grill grate, tumbling and settling into a two-tone pile. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep meaty slam with low-end punch, a fat sizzle, faint charcoal crackle, no music, no voices.
-```
-
-## Kebabs — breads
-
-**5 · flatbread**
-```
-A large fresh flatbread with charred grill marks flops down flat from the darkness above onto the centre of the empty scorched grill grate, landing with a soft heavy slap and a small puff of flour. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one soft doughy slap with a dusty flour puff, faint charcoal crackle, no music, no voices.
-```
-
-**6 · pitta**
+**5 · pitta** — unchanged from v1:
 ```
 A warm oval pitta bread drops flat from the darkness above onto the centre of the empty scorched grill grate, bouncing once with a soft slap and settling. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one soft doughy slap, faint charcoal crackle, no music, no voices.
 ```
 
-**7 · naan**
+**7 · naan** — unchanged from v1:
 ```
 A fresh buttery naan bread flops down from the darkness above onto the centre of the empty scorched grill grate, landing with a heavy soft slap, its glossy buttered surface catching the ember light. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one soft heavy doughy slap with a faint butter sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-## Kebabs — salad
-
-**8 · lettuce**
+**26 · bun (toasted brioche bottom)**
 ```
-Shredded crisp iceberg lettuce rains down from the darkness above onto the centre of the empty scorched grill grate — dozens of light green shreds tumble through the air, bounce and settle into a loose pile. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a crisp light rustle as the shreds land, faint charcoal crackle, no music, no voices.
+The bottom half of a glossy toasted brioche bun drops from the darkness above onto the centre of the empty scorched grill grate, landing cut-side up with a soft rounded thump, bouncing once and settling. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one soft rounded thump, faint charcoal crackle, no music, no voices.
 ```
 
-**9 · tomato**
+**27 · bun-seeded (seeded bottom)**
 ```
-Three thick juicy tomato slices drop from the darkness above and slap down onto the centre of the empty scorched grill grate one-two-three, a fine mist of juice on the last impact. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: three quick wet slaps, faint charcoal crackle, no music, no voices.
-```
-
-**10 · onion**
-```
-A scatter of red onion rings drops from the darkness above onto the centre of the empty scorched grill grate — purple-white rings bouncing, rolling briefly and settling flat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a quick scatter of light crisp taps, faint charcoal crackle, no music, no voices.
+The bottom half of a seeded burger bun drops from the darkness above onto the centre of the empty scorched grill grate, landing cut-side up with a soft rounded thump, a few sesame seeds scattering loose, bouncing once and settling. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one soft rounded thump and a faint seed scatter, faint charcoal crackle, no music, no voices.
 ```
 
-**11 · cabbage**
+## Stage 1 — onto the bread (start frame: `gousto-bed-1-bread`) — RUN THE DONER FIRST
+
+**1 · doner v2 (lamb doner)** ← run this one first, Claude needs its end frame
 ```
-Shredded red cabbage rains down from the darkness above onto the centre of the empty scorched grill grate — vivid purple shreds tumbling through the air and settling into a loose pile. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a crisp dry rustle, faint charcoal crackle, no music, no voices.
+A generous heap of flame-cut lamb doner ribbons falls from the darkness above and slams down onto the charred flatbread lying on the grill grate — crispy-edged brown ribbons piling onto the bread, the flatbread taking the impact with a small bounce and a puff of flour dust. The bread stays under the meat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep meaty slam with low-end punch, a short fat sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-**12 · chillies (pickled chillies)**
+**2 · chicken v2**
 ```
-Three whole glossy pickled green chillies drop from the darkness above onto the centre of the empty scorched grill grate, bouncing once, rolling and settling with their stems up. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: three light wet taps and a brief roll, faint charcoal crackle, no music, no voices.
-```
-
-**13 · halloumi (grilled halloumi)**
-```
-Two thick slabs of grilled halloumi with dark grill marks slap down from the darkness above onto the centre of the empty scorched grill grate, one landing half across the other, a small sizzle on contact. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: two firm squeaky slaps with a short sizzle, faint charcoal crackle, no music, no voices.
+A generous heap of golden chicken doner ribbons falls from the darkness above and slams down onto the charred flatbread lying on the grill grate — glistening golden-brown ribbons piling onto the bread, the flatbread taking the impact with a small bounce. The bread stays under the meat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep meaty slam, a bright sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-## Sauces (shared) — pours, not slams
-
-**14 · sauce-garlic**
+**3 · shish v2**
 ```
-A thick ribbon of white garlic sauce pours down from the darkness above onto the centre of the empty scorched grill grate, drizzling side to side in a zigzag before the stream snaps off, the pooled sauce settling glossy. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift with a small wisp of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle, faint charcoal crackle, no music, no voices.
+Five fat cubes of charred lamb shish drop from the darkness above and slam onto the charred flatbread lying on the grill grate one after another in under a second — dark char-edged cubes bouncing once on the bread and settling in a rough line. The bread stays under the meat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a rapid drumroll of five heavy meaty thuds, a short sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-**15 · sauce-chilli**
+**4 · mixed v2**
 ```
-A thick ribbon of fiery red chilli sauce pours down from the darkness above onto the centre of the empty scorched grill grate, drizzling side to side in a zigzag before the stream snaps off, the pooled sauce settling glossy. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift with a small wisp of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle, faint charcoal crackle, no music, no voices.
-```
-
-**16 · sauce-mint**
-```
-A thick ribbon of pale green mint yoghurt sauce pours down from the darkness above onto the centre of the empty scorched grill grate, drizzling side to side in a zigzag before the stream snaps off, the pooled sauce settling glossy. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift with a small wisp of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle, faint charcoal crackle, no music, no voices.
+A heap of mixed doner ribbons — dark flame-cut lamb tangled with golden chicken — falls from the darkness above and slams down onto the charred flatbread lying on the grill grate, piling onto the bread in a two-tone heap, the flatbread taking the impact with a small bounce. The bread stays under the meat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep meaty slam with low-end punch, a fat sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-**17 · sauce-bbq**
+## Stage 2 — onto the meat (start frame: `gousto-bed-2-meat` — Claude uploads it after doner v2)
+
+**8 · lettuce v2**
 ```
-A thick ribbon of dark smoked BBQ sauce pours down from the darkness above onto the centre of the empty scorched grill grate, drizzling side to side in a zigzag before the stream snaps off, the pooled sauce settling glossy and catching the ember light. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift with a small wisp of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle, faint charcoal crackle, no music, no voices.
+Shredded crisp iceberg lettuce rains down from the darkness above onto the pile of doner meat on the flatbread — dozens of light green shreds tumbling through the air, landing across the hot meat and settling. The meat and bread stay beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a crisp light rustle over a faint meat sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-**18 · sauce-burger (house burger sauce)**
+**9 · tomato v2**
 ```
-A thick ribbon of peach-coloured house burger sauce pours down from the darkness above onto the centre of the empty scorched grill grate, drizzling side to side in a zigzag before the stream snaps off, the pooled sauce settling glossy. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift with a small wisp of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle, faint charcoal crackle, no music, no voices.
-```
-
-## Burgers — patties
-
-**19 · patty (smashed beef)**
-```
-One thick smashed beef patty with a dark charred crust slams down from the darkness above onto the centre of the empty scorched grill grate — a ring of juice splashes out on impact and it settles sizzling. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep heavy slam with a juicy splat and a hard sizzle, faint charcoal crackle, no music, no voices.
+Three thick juicy tomato slices drop from the darkness above and slap down onto the pile of doner meat on the flatbread one-two-three, a fine mist of juice on the last impact. The meat and bread stay beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: three quick wet slaps over a faint sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-**20 · patty-double (double smash)**
+**10 · onion v2**
 ```
-Two thick smashed beef patties slam down from the darkness above onto the centre of the empty scorched grill grate a half-second apart, the second landing squarely on the first — juice splashes on both impacts, the stack settles sizzling. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: two deep heavy slams with juicy splats and a hard sizzle, faint charcoal crackle, no music, no voices.
-```
-
-**21 · fillet (crispy chicken)**
-```
-One large golden crispy-coated chicken fillet drops from the darkness above and lands hard on the centre of the empty scorched grill grate — crumbs of golden coating scatter on impact and it settles. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one heavy crunchy slam with a crisp crackle of coating, faint charcoal crackle, no music, no voices.
+A scatter of red onion rings drops from the darkness above onto the pile of doner meat on the flatbread — purple-white rings bouncing off the meat, rolling briefly and settling. The meat and bread stay beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a quick scatter of light crisp taps, faint charcoal crackle, no music, no voices.
 ```
 
-**22 · halloumi-patty (halloumi stack)**
+**11 · cabbage v2**
 ```
-Three thick slabs of grilled halloumi with dark grill marks slam down from the darkness above onto the centre of the empty scorched grill grate in quick succession, stacking roughly on top of each other, a small sizzle on each contact. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: three firm squeaky slaps with short sizzles, faint charcoal crackle, no music, no voices.
-```
-
-## Burgers — the build
-
-**23 · cheese (american cheese)**
-```
-A single square slice of orange American cheese floats down from the darkness above, flips once lazily, and lands flat on the centre of the empty scorched grill grate — its corners immediately begin to soften and droop from the heat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift with a small wisp of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one soft slap then a faint buttery sizzle as it melts, faint charcoal crackle, no music, no voices.
+Shredded red cabbage rains down from the darkness above onto the pile of doner meat on the flatbread — vivid purple shreds tumbling through the air and settling across the meat. The meat and bread stay beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a crisp dry rustle, faint charcoal crackle, no music, no voices.
 ```
 
-**24 · bacon (smoked bacon)**
+**12 · chillies v2**
 ```
-Two rashers of smoked streaky bacon drop from the darkness above and land across the centre of the empty scorched grill grate — they hit with a violent sizzle, edges curling immediately in the heat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: two light slaps into a loud aggressive bacon sizzle, faint charcoal crackle, no music, no voices.
-```
-
-**25 · jalapenos (jalapeños)**
-```
-A scatter of sliced green jalapeño rings drops from the darkness above onto the centre of the empty scorched grill grate — bright green rings bouncing, rolling and settling flat. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a quick scatter of light wet taps, faint charcoal crackle, no music, no voices.
+Three whole glossy pickled green chillies drop from the darkness above onto the pile of doner meat on the flatbread, bouncing once off the meat, rolling and settling with their stems up. The meat and bread stay beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: three light wet taps and a brief roll, faint charcoal crackle, no music, no voices.
 ```
 
-## Burgers — buns
-
-**26 · bun (toasted brioche)**
+**13 · halloumi v2**
 ```
-A glossy toasted brioche bun, split in two, drops from the darkness above onto the centre of the empty scorched grill grate — both halves land cut-side down a beat apart, bounce softly and settle side by side, toasted faces golden. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: two soft rounded thumps, faint charcoal crackle, no music, no voices.
+Two thick slabs of grilled halloumi with dark grill marks slap down from the darkness above onto the pile of doner meat on the flatbread, one landing half across the other, a small sizzle on contact. The meat and bread stay beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: two firm squeaky slaps with a short sizzle, faint charcoal crackle, no music, no voices.
 ```
 
-**27 · bun-seeded (seeded bun)**
+**14 · sauce-garlic v2**
 ```
-A seeded burger bun, split in two, drops from the darkness above onto the centre of the empty scorched grill grate — both halves land a beat apart, a few sesame seeds scattering loose on impact, and settle side by side. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: two soft rounded thumps and a faint seed scatter, faint charcoal crackle, no music, no voices.
+A thick ribbon of white garlic sauce pours down from the darkness above onto the loaded kebab — meat and salad on the flatbread — drizzling side to side in a zigzag across the top before the stream snaps off, the sauce settling glossy over the meat. Everything beneath stays in place. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle over a faint sizzle, no music, no voices.
 ```
 
-## Finales
+**15 · sauce-chilli v2**
+```
+A thick ribbon of fiery red chilli sauce pours down from the darkness above onto the loaded kebab — meat and salad on the flatbread — drizzling side to side in a zigzag across the top before the stream snaps off, the sauce settling glossy over the meat. Everything beneath stays in place. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once then settles; a couple of tiny ember sparks drift. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no bottle, no props, no text. AUDIO: a soft thick drizzle and a wet settle over a faint sizzle, no music, no voices.
+```
 
-**28 · burger-finale (plays on "WRAP IT" for burgers; kebab finale reuses the hero clip reversed)**
+**16 · sauce-mint v2** — same as 14 with: `pale green mint yoghurt sauce`
+**17 · sauce-bbq v2** — same as 14 with: `dark smoked BBQ sauce`
+
+## Burgers (chain: bun → patty → toppings)
+
+**19 · patty v2** (start frame: `gousto-bed-B1-bun` — after the bun clip lands)
 ```
-Burger ingredients rain down from the darkness above onto the centre of the empty scorched grill grate and assemble in mid-air into a tall finished burger — a toasted brioche bun, smashed beef patties, melting cheese, lettuce, tomato and sauce stacking into place in one continuous motion, the completed burger landing standing on the grate with a final heavy settle. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on the final landing then settles; a few tiny ember sparks kick up with a small puff of ash dust. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: a rapid rhythmic run of soft impacts building to one deep final slam and a short sizzle, no music, no voices.
+One thick smashed beef patty with a dark charred crust slams down from the darkness above onto the toasted bun half sitting on the grill grate — a ring of juice splashes on impact and it settles sizzling on the bread. The bun stays beneath. Locked-off camera, absolutely no camera movement. The near-black charcoal background stays dark; the warm ember glow under the grate flares once on impact then settles; a few tiny ember sparks kick up. Razor sharp, appetising, premium editorial food film. Nothing else enters frame — no hands, no props, no text. AUDIO: one deep heavy slam with a juicy splat and a hard sizzle, faint charcoal crackle, no music, no voices.
 ```
+
+**20–25** (double smash, crispy chicken, halloumi stack → onto the bun bed; cheese, bacon, jalapeños + **18 · burger sauce** → onto `gousto-bed-B2-patty`) — same pattern: v1 wording with "onto the toasted bun half" / "onto the smashed patty" landing surface. Claude will paste the exact set when the beds exist.
+
+**28 · burger-finale** — unchanged (rain-assembly of the whole burger, from the empty grill).
