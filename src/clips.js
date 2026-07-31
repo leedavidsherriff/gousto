@@ -15,6 +15,8 @@ export const CLIPS = {
   flatbread: clip('flatbread'),
   doner: clip('doner'),
   mixed: clip('mixed'),
+  chicken: clip('chicken'),
+  patty: clip('patty'),
   lettuce: clip('lettuce'),
   tomato: clip('tomato'),
   onion: clip('onion'),

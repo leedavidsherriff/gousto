@@ -680,20 +680,16 @@ function AnimatedPrice({ value, className, reduced }) {
 
 /* ── Builder ────────────────────────────────────────────────────────────── */
 
+// Everything starts deselected — the customer chooses every step.
+// Hidden groups (the flatbread) are auto-included.
 const defaultSelections = () => {
   const sel = {}
   for (const tab of BIZ.builder.tabs) {
     sel[tab.id] = {}
     for (const group of tab.groups) {
-      if (group.pick === 'one') sel[tab.id][group.id] = [group.items[0].id]
-      else sel[tab.id][group.id] = []
+      sel[tab.id][group.id] = group.hidden ? [group.items[0].id] : []
     }
   }
-  // a tasty-looking starting build
-  if (sel.kebabs?.salad) sel.kebabs.salad = ['salad-lt']
-  if (sel.kebabs?.sauce) sel.kebabs.sauce = ['garlic-chilli']
-  if (sel.burgers?.toppings) sel.burgers.toppings = ['cheese']
-  if (sel.burgers?.sauce) sel.burgers.sauce = ['burger-sauce']
   return sel
 }
 
