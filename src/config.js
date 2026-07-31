@@ -53,7 +53,7 @@ export const BIZ = {
             items: [
               { id: 'lamb-doner', name: 'The Gousto Original', desc: 'Flame-cut lamb doner', price: 6.5, layer: 'doner' },
               { id: 'chicken-doner', name: 'The Firebird', desc: 'Chicken doner', price: 7.0, layer: 'chicken' },
-              { id: 'lamb-shish', name: 'The Charcoal King', desc: 'Lamb shish', price: 9.0, layer: 'shish', hidden: true },
+              { id: 'lamb-shish', name: 'The Charcoal King', desc: 'Lamb shish', price: 9.0, layer: 'shish' },
               { id: 'mixed-doner', name: 'The Double Act', desc: 'Lamb & chicken, mixed', price: 8.5, layer: 'mixed' },
             ],
           },
@@ -103,9 +103,9 @@ export const BIZ = {
             id: 'patty', label: 'The patty', pick: 'one',
             items: [
               { id: 'smash', name: 'The Esplanade Smash', desc: 'Smashed beef burger', price: 6.5, layer: 'patty', clip: 'patty', cardStill: 'clips/burger-finale.jpg' },
-              { id: 'double-smash', name: 'The Two-Storey', desc: 'Double smash burger', price: 8.5, layer: 'patty-double', hidden: true },
-              { id: 'chicken-fillet', name: 'The Crispy Bird', desc: 'Crispy chicken burger', price: 7.5, layer: 'fillet', hidden: true },
-              { id: 'halloumi-stack', name: 'The Squeaky Stack', desc: 'Halloumi burger', price: 7.0, layer: 'halloumi-patty', hidden: true },
+              { id: 'double-smash', name: 'The Two-Storey', desc: 'Double smash burger', price: 8.5, layer: 'patty-double', clip: 'patty-double' },
+              { id: 'chicken-fillet', name: 'The Crispy Bird', desc: 'Crispy chicken burger', price: 7.5, layer: 'fillet', clip: 'fillet' },
+              { id: 'halloumi-stack', name: 'The Squeaky Stack', desc: 'Halloumi burger', price: 7.0, layer: 'halloumi-patty', clip: 'halloumi-patty' },
             ],
           },
           {
