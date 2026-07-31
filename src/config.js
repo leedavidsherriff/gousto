@@ -121,7 +121,7 @@ export const BIZ = {
               { id: 'plain', name: 'Plain', price: 0, layer: null },
               { id: 'cheese', name: 'American cheese', price: 1.0, layer: 'cheese', clip: 'burger-cheese' },
               { id: 'cheese-salad', name: 'Cheese & salad', price: 1.75, layer: ['cheese', 'lettuce', 'tomato', 'onion'], clip: 'burger-cheese-salad' },
-              { id: 'the-works', name: 'The works', price: 3.0, layer: ['cheese', 'bacon', 'jalapenos', 'lettuce', 'tomato', 'onion'], clip: 'burger-works', hidden: true },
+              { id: 'the-works', name: 'The works', price: 3.0, layer: ['cheese', 'bacon', 'jalapenos', 'lettuce', 'tomato', 'onion'], clip: 'burger-works' },
             ],
           },
           {
