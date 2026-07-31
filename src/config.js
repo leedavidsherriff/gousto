@@ -52,8 +52,8 @@ export const BIZ = {
             id: 'meat', label: 'The meat', pick: 'one',
             items: [
               { id: 'lamb-doner', name: 'Lamb doner', price: 6.5, layer: 'doner' },
-              { id: 'chicken-doner', name: 'Chicken doner', price: 7.0, layer: 'chicken' },
-              { id: 'lamb-shish', name: 'Lamb shish', price: 9.0, layer: 'shish' },
+              { id: 'chicken-doner', name: 'Chicken doner', price: 7.0, layer: 'chicken', hidden: true },
+              { id: 'lamb-shish', name: 'Lamb shish', price: 9.0, layer: 'shish', hidden: true },
               { id: 'mixed-doner', name: 'Mixed doner', price: 8.5, layer: 'mixed' },
             ],
           },
@@ -98,6 +98,7 @@ export const BIZ = {
       {
         id: 'burgers',
         label: 'Burgers',
+        comingSoon: true,
         groups: [
           {
             id: 'patty', label: 'The patty', pick: 'one',

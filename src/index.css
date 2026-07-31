@@ -252,6 +252,17 @@ main, header, footer { position: relative; z-index: 2; }
   border-color: transparent;
   transform: rotate(-1deg);
 }
+.tab.soon {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  opacity: 0.45;
+  cursor: default;
+}
+.tab.soon small {
+  font-family: var(--font-body);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--amber);
+}
 
 /* Option groups */
 .group { margin-bottom: 26px; }

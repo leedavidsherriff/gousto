@@ -14,6 +14,7 @@ export const CLIPS = {
   'salad-works': clip('salad-works'),
   flatbread: clip('flatbread'),
   doner: clip('doner'),
+  mixed: clip('mixed'),
   lettuce: clip('lettuce'),
   tomato: clip('tomato'),
   onion: clip('onion'),

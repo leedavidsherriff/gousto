@@ -945,7 +945,7 @@ function Builder({ reduced }) {
   }, [])
 
   const onTabKey = (e) => {
-    const ids = BIZ.builder.tabs.map((t) => t.id)
+    const ids = BIZ.builder.tabs.filter((t) => !t.comingSoon).map((t) => t.id)
     const idx = ids.indexOf(activeTabId)
     let next = null
     if (e.key === 'ArrowRight') next = ids[(idx + 1) % ids.length]
@@ -978,25 +978,31 @@ function Builder({ reduced }) {
       <div className="builder-grid">
         <div>
           <div className="tabs" role="tablist" aria-label="Kebabs or burgers">
-            {BIZ.builder.tabs.map((t) => (
-              <button
-                key={t.id}
-                ref={(el) => (tabRefs.current[t.id] = el)}
-                className="tab"
-                role="tab"
-                id={`tab-${t.id}`}
-                aria-selected={t.id === activeTabId}
-                aria-controls={`panel-${t.id}`}
-                tabIndex={t.id === activeTabId ? 0 : -1}
-                onKeyDown={onTabKey}
-                onClick={() => {
-                  setActiveTabId(t.id)
-                  setFilmCue(null)
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
+            {BIZ.builder.tabs.map((t) =>
+              t.comingSoon ? (
+                <span key={t.id} className="tab soon" aria-disabled="true">
+                  {t.label} <small>soon</small>
+                </span>
+              ) : (
+                <button
+                  key={t.id}
+                  ref={(el) => (tabRefs.current[t.id] = el)}
+                  className="tab"
+                  role="tab"
+                  id={`tab-${t.id}`}
+                  aria-selected={t.id === activeTabId}
+                  aria-controls={`panel-${t.id}`}
+                  tabIndex={t.id === activeTabId ? 0 : -1}
+                  onKeyDown={onTabKey}
+                  onClick={() => {
+                    setActiveTabId(t.id)
+                    setFilmCue(null)
+                  }}
+                >
+                  {t.label}
+                </button>
+              )
+            )}
           </div>
 
           <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`}>
@@ -1004,7 +1010,7 @@ function Builder({ reduced }) {
               <fieldset className="group" key={group.id} style={{ border: 0 }}>
                 <legend className="group-label">{group.label}</legend>
                 <div className="opts">
-                  {group.items.map((item) => {
+                  {group.items.filter((i) => !i.hidden).map((item) => {
                     const on = sel[activeTabId][group.id]?.includes(item.id)
                     return (
                       <button
