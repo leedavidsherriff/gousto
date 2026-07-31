@@ -417,6 +417,7 @@ function FilmOverlay({ cue, onActive }) {
     v.muted = isMuted()
     const begin = () => {
       if (cue.startAt) v.currentTime = cue.startAt
+      v.playbackRate = cue.rate || 1
       const p = v.play()
       if (p) {
         p.catch(() => {

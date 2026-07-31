@@ -33,7 +33,9 @@ export const CLIPS = {
 }
 
 export const FINALES = {
-  kebabs: { src: 'hero-loop.mp4', startAt: 8.05 },
+  // Reverse half of the hero loop, skipped in and played fast — a ~3.5s snap
+  // of the kebab assembling instead of the full slow-motion drift.
+  kebabs: { src: 'hero-loop.mp4', startAt: 10.2, rate: 2.2 },
   burgers: { src: 'clips/burger-finale.mp4' },
 }
 
