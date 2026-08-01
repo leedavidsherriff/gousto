@@ -24,6 +24,7 @@ export const CLIPS = {
   'burger-cheese': clip('burger-cheese'),
   'burger-cheese-salad': clip('burger-cheese-salad'),
   'burger-works': clip('burger-works'),
+  'meal-deal': clip('meal-deal'),
   lettuce: clip('lettuce'),
   tomato: clip('tomato'),
   onion: clip('onion'),

@@ -8,6 +8,30 @@ import { CLIPS, FINALES, SET_PLATE, clipKeyFor } from './clips.js'
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 
+// Warm the browser cache for clips before they're needed — touching a menu
+// card prefetches its clip; opening a build page prefetches the whole tab.
+const prefetched = new Set()
+function prefetchClip(src) {
+  if (!src || prefetched.has(src)) return
+  prefetched.add(src)
+  const link = document.createElement('link')
+  link.rel = 'prefetch'
+  link.as = 'video'
+  link.href = src
+  document.head.appendChild(link)
+}
+function prefetchTabClips(tabId) {
+  const t = BIZ.builder.tabs.find((x) => x.id === tabId)
+  if (!t) return
+  for (const g of t.groups) {
+    for (const item of g.items) {
+      const key = item.clip ?? (typeof item.layer === 'string' ? item.layer : null)
+      if (key && CLIPS[key]) prefetchClip(CLIPS[key].src)
+    }
+  }
+  if (FINALES[tabId]) prefetchClip(FINALES[tabId].src)
+}
+
 const hash = (str) => {
   let h = 2166136261
   for (let i = 0; i < str.length; i++) {
@@ -816,7 +840,7 @@ function Builder({ reduced }) {
     const selecting =
       !cur.includes(item.id) || (group.pick === 'one' && cur.includes(item.id))
 
-    if (selecting && item.layer && !reduced) {
+    if (selecting && (item.layer || item.clip) && !reduced) {
       const meatGroup = tab.groups[0]
       const meatItem = meatGroup.items.find((i) =>
         sel[activeTabId][meatGroup.id]?.includes(i.id)
@@ -954,6 +978,7 @@ function Builder({ reduced }) {
           tabLabel: t.label.replace(/s$/, ''),
           item,
           still: item.cardStill || (key && CLIPS[key]?.still) || SET_PLATE,
+          clipSrc: (key && CLIPS[key]?.src) || null,
         })
       }
     }
@@ -964,6 +989,7 @@ function Builder({ reduced }) {
     primeAudio()
     const t = BIZ.builder.tabs.find((x) => x.id === card.tabId)
     setActiveTabId(card.tabId)
+    prefetchTabClips(card.tabId)
     setSel((prev) => ({
       ...prev,
       [card.tabId]: Object.fromEntries(
@@ -1054,6 +1080,8 @@ function Builder({ reduced }) {
                 key={`${c.tabId}-${c.item.id}`}
                 className="product-card"
                 onClick={() => selectProduct(c)}
+                onPointerEnter={() => prefetchClip(c.clipSrc)}
+                onFocus={() => prefetchClip(c.clipSrc)}
               >
                 <img src={c.still} alt="" loading="lazy" />
                 <span className="pc-meta">

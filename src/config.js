@@ -90,7 +90,7 @@ export const BIZ = {
             items: [
               { id: 'halloumi', name: 'Squeaky cheese — grilled halloumi', price: 1.5, layer: 'halloumi', clip: 'halloumi' },
               { id: 'double-meat', name: 'Go heavy — double meat', price: 2.5, layer: 'DOUBLE_MEAT' },
-              { id: 'meal-deal', name: 'The late shift — chips & a can', price: 3.0, layer: null },
+              { id: 'meal-deal', name: 'The late shift — chips & a can', price: 3.0, layer: null, clip: 'meal-deal' },
               { id: 'cheesy-chips', name: 'Cheesy chips', price: 3.5, layer: null },
             ],
           },
