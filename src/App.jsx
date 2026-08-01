@@ -1304,7 +1304,7 @@ function Hero() {
 
       <div className="hero-core">
         <p className="hero-kicker">
-          Kebabs &amp; burgers · {BIZ.town} sea front
+          Kebabs &amp; burgers · {BIZ.locationLine}
         </p>
         <h1 className="display hero-word">
           G<span className="o">O</span>USTO
@@ -1361,12 +1361,12 @@ function InfoStrip() {
         </div>
         <div>
           <h3>
-            On the <span>front</span>
+            Just off the <span>front</span>
           </h3>
           <p>
             <strong>{BIZ.address}</strong>
             <br />
-            Face the sea, follow the smell of the grill. You can't miss us.
+            A few steps back from the beach — follow the smell of the grill. You can't miss us.
           </p>
         </div>
         <div>

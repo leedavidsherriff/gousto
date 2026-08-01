@@ -6,7 +6,8 @@ export const BIZ = {
   name: 'GOUSTO',
   tagline: 'Flame-cut. Stacked heavy. Open when the pubs shut.',
   town: 'Porthcawl',
-  address: 'The Esplanade, Porthcawl Sea Front, CF36 3YW',
+  address: 'Just off the sea front, Porthcawl, CF36 3YW',
+  locationLine: 'just off the sea front, Porthcawl',
   phone: '01656 772 441',
   phoneHref: 'tel:+441656772441',
 
@@ -17,7 +18,7 @@ export const BIZ = {
   ],
 
   // Ticker strip between hero and builder
-  ticker: ['OPEN ’TIL 3AM', 'FRESH CUT DAILY', 'FLAME-GRILLED', 'SEA FRONT · PORTHCAWL', 'CASH & CARD'],
+  ticker: ['OPEN ’TIL 3AM', 'FRESH CUT DAILY', 'FLAME-GRILLED', 'JUST OFF THE SEA FRONT · PORTHCAWL', 'CASH & CARD'],
 
   // Hero media. Leave heroVideoUrl empty to use the animated ember fallback.
   // The clip: a kebab exploding into its separate ingredients — the builder
