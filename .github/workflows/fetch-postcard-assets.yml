@@ -1,6 +1,10 @@
 name: Fetch postcard assets
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - claude/karl-gardner-postcard-ragrvi
+    paths:
+      - postcard/fetch-request.txt
 
 permissions:
   contents: write
@@ -13,15 +17,15 @@ jobs:
       - name: Download generated images
         run: |
           mkdir -p postcard/assets
-          base="https://d8j0ntlcm91z4.cloudfront.net/user_3EqnuaqEWb2299IejFDCfj8sKws"
-          curl -fsSL -o postcard/assets/corner-v0.png "$base/hf_20260804_112638_98f61abb-874b-417d-acc5-4f64bbb6020f.png"
-          curl -fsSL -o postcard/assets/corner-v1.png "$base/hf_20260804_112638_b8db4d21-9894-45d3-b9a4-0487c4698d66.png"
-          curl -fsSL -o postcard/assets/corner-v2.png "$base/hf_20260804_112638_24ac0d31-1471-45a3-b804-b01b6de910c9.png"
+          while read -r name url; do
+            [ -z "$name" ] && continue
+            curl -fsSL -o "postcard/assets/$name" "$url"
+          done < postcard/fetch-request.txt
           ls -la postcard/assets
       - name: Commit assets
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add postcard/assets
-          git commit -m "Add generated corner extension variants [skip ci]"
+          git commit -m "Add fetched postcard assets [skip ci]"
           git push
