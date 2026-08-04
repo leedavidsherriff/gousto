@@ -1,0 +1,31 @@
+name: Fetch postcard assets
+on:
+  push:
+    branches:
+      - claude/karl-gardner-postcard-ragrvi
+    paths:
+      - postcard/fetch-request.txt
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download generated images
+        run: |
+          mkdir -p postcard/assets
+          while read -r name url; do
+            [ -z "$name" ] && continue
+            curl -fsSL -o "postcard/assets/$name" "$url"
+          done < postcard/fetch-request.txt
+          ls -la postcard/assets
+      - name: Commit assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add postcard/assets
+          git commit -m "Add fetched postcard assets [skip ci]"
+          git push
