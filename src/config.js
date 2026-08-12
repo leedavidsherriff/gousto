@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // BIZ — the only block you touch to reskin this site for another shop.
-// Every string, price, colour and media URL the site renders lives here.
+// Every string, price, colour and media URL the site renders lives in here.
 // ─────────────────────────────────────────────────────────────────────────────
 export const BIZ = {
   name: 'GOUSTO',
@@ -10,6 +10,12 @@ export const BIZ = {
   locationLine: 'just off the sea front, Porthcawl',
   phone: '01656 772 441',
   phoneHref: 'tel:+441656772441',
+
+  // The shop's WhatsApp order line — international format, digits only
+  // (447700900123, not 07700 900123). Must be a number that is actually
+  // registered with WhatsApp or the link opens an "invalid number" screen.
+  // Leave empty to hide the WhatsApp button and fall back to call + copy.
+  whatsapp: '441656772441',
 
   hours: [
     { days: 'Mon – Thu', time: '4pm – 1am' },
@@ -38,6 +44,50 @@ export const BIZ = {
     amber: '#FFB021',
     cream: '#F5E9D4',
     smoke: '#8A8178',
+  },
+
+  // ── Fixed copy ─────────────────────────────────────────────────────────────
+  // Everything the template writes on the page that isn't a menu item.
+  // Headings are [plain, accent] pairs — the accent half renders in `ember`.
+  copy: {
+    wordmarkAccent: 1,
+    heroKicker: 'Kebabs & burgers',
+    heroCta: 'Build yours',
+    builderHeading: ['Build it.', 'Watch the price.'],
+    builderBlurb:
+      'Pick your meat, stack it how you want it, ring it through. What you see is what lands in the wrap.',
+    hoursHeading: ['Open', 'late'],
+    locationHeading: ['Just off the', 'front'],
+    locationBlurb:
+      "A few steps back from the beach — follow the smell of the grill. You can't miss us.",
+    orderHeading: ['Ring it', 'through'],
+    orderBlurb: 'Order ahead, skip the queue. Collection only.',
+    footerLine: 'Porthcawl, South Wales · Fresh cut daily',
+  },
+
+  // ── Head tags ──────────────────────────────────────────────────────────────
+  // Baked into index.html at build time, so the tab, the share card and the
+  // Google listing all carry the shop's name instead of the template's.
+  seo: {
+    title: 'GOUSTO — Kebabs & Burgers, just off the sea front, Porthcawl',
+    description:
+      'GOUSTO — late-night kebabs and burgers just off the sea front in Porthcawl. Flame-cut doner, smashed burgers, open when the pubs shut.',
+    ogTitle: 'GOUSTO — Build it. Watch the price.',
+    ogDescription:
+      'Late-night kebabs & burgers just off the sea front in Porthcawl. Build yours and watch every ingredient slam onto the grill.',
+    url: 'https://leedavidsherriff.github.io/gousto/',
+    image: 'https://leedavidsherriff.github.io/gousto/og.jpg',
+    initial: 'G',
+    schemaDescription:
+      'Late-night kebab and burger shop just off the sea front in Porthcawl, South Wales.',
+    locality: 'Porthcawl',
+    postcode: 'CF36 3YW',
+    // Schema hours are 24h and separate from the display `hours` above.
+    openingHours: [
+      { dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], opens: '16:00', closes: '01:00' },
+      { dayOfWeek: ['Friday', 'Saturday'], opens: '16:00', closes: '03:00' },
+      { dayOfWeek: 'Sunday', opens: '16:00', closes: '00:00' },
+    ],
   },
 
   // ── The builder ────────────────────────────────────────────────────────────

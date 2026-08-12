@@ -10,7 +10,7 @@ let buffers = {}
 let loadStarted = false
 let muted
 try {
-  muted = localStorage.getItem('gousto-muted') === '1'
+  muted = localStorage.getItem('shop-muted') === '1'
 } catch {
   muted = false
 }
@@ -43,7 +43,7 @@ export function primeAudio() {
 export function setMuted(m) {
   muted = m
   try {
-    localStorage.setItem('gousto-muted', m ? '1' : '0')
+    localStorage.setItem('shop-muted', m ? '1' : '0')
   } catch {
     /* private mode */
   }
