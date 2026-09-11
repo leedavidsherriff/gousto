@@ -1,0 +1,1611 @@
+<title>Sweep Certificate Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bitter:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --ground:#F4F6F7;
+    --surface:#FFFFFF;
+    --surface-2:#EAEEF0;
+    --ink:#1A2024;
+    --ink-2:#4C575E;
+    --ink-3:#79868E;
+    --line:#D6DDE1;
+    --line-2:#C2CCD2;
+    --accent:#96620F;
+    --accent-2:#A9701A;
+    --accent-soft:#F5E9D4;
+    --pass:#2C6A4B;--pass-bg:#E1EFE7;
+    --fail:#9E2B24;--fail-bg:#F7E4E2;
+    --na:#66727A;--na-bg:#E6EBEE;
+    --shadow:0 1px 2px rgba(26,32,36,.06),0 8px 24px rgba(26,32,36,.05);
+    --radius:10px;
+    --display:"Bitter",Georgia,"Times New Roman",serif;
+    --body:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#12181B;
+      --surface:#1B2226;
+      --surface-2:#232D32;
+      --ink:#EDF2F4;
+      --ink-2:#AFBBC2;
+      --ink-3:#7F8D95;
+      --line:#2E3A40;
+      --line-2:#3C4A51;
+      --accent:#DFAA55;
+      --accent-2:#D6A048;
+      --accent-soft:#332916;
+      --pass:#72C194;--pass-bg:#1B3126;
+      --fail:#EB8981;--fail-bg:#3A211F;
+      --na:#8E9AA1;--na-bg:#252F34;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#12181B;
+    --surface:#1B2226;
+    --surface-2:#232D32;
+    --ink:#EDF2F4;
+    --ink-2:#AFBBC2;
+    --ink-3:#7F8D95;
+    --line:#2E3A40;
+    --line-2:#3C4A51;
+    --accent:#DFAA55;
+    --accent-2:#D6A048;
+    --accent-soft:#332916;
+    --pass:#72C194;--pass-bg:#1B3126;
+    --fail:#EB8981;--fail-bg:#3A211F;
+    --na:#8E9AA1;--na-bg:#252F34;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--body);font-size:15px;line-height:1.5;
+    -webkit-text-size-adjust:100%;
+  }
+  h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
+  button,input,select,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:4px}
+
+  /* ---------- chrome ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:30;background:var(--surface);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-in{
+    max-width:760px;margin:0 auto;padding:10px 16px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .mark{
+    width:30px;height:30px;flex:0 0 30px;border-radius:7px;
+    background:var(--accent-soft);display:grid;place-items:center;
+  }
+  .mark svg{width:18px;height:18px;display:block}
+  .wordmark{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-.01em}
+  .trading{font-size:11px;color:var(--ink-3);margin-top:-2px}
+  .tabs{
+    max-width:760px;margin:0 auto;padding:0 10px 0;
+    display:flex;gap:2px;
+  }
+  .tab{
+    appearance:none;background:none;border:0;cursor:pointer;
+    padding:9px 12px 10px;font-size:13px;font-weight:600;color:var(--ink-3);
+    border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;
+  }
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent-2)}
+  .tab .count{
+    font-family:var(--mono);font-size:10px;padding:1px 5px;border-radius:20px;
+    background:var(--surface-2);color:var(--ink-2);font-variant-numeric:tabular-nums;
+  }
+  .tab[data-due="true"] .count{background:var(--fail-bg);color:var(--fail)}
+
+  main{max-width:760px;margin:0 auto;padding-block:16px 96px;padding-left:16px;padding-right:16px}
+  .view[hidden]{display:none}
+
+  /* ---------- blocks ---------- */
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .card + .card{margin-top:14px}
+  .card-head{
+    padding:12px 14px;border-bottom:1px solid var(--line);
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  }
+  .card-head h2{font-size:15px}
+  .card-head .hint{font-size:12px;color:var(--ink-3)}
+  .card-body{padding:14px}
+
+  .eyebrow{
+    font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);
+  }
+
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:1fr 1fr}
+  @media (max-width:560px){.g2{grid-template-columns:1fr}}
+
+  label.field{display:flex;flex-direction:column;gap:5px}
+  label.field > span{font-size:12px;font-weight:600;color:var(--ink-2)}
+  input[type=text],input[type=tel],input[type=email],input[type=date],textarea,select{
+    width:100%;background:var(--surface);border:1px solid var(--line-2);
+    border-radius:8px;padding:9px 10px;font-size:15px;
+  }
+  textarea{resize:vertical;min-height:70px;line-height:1.45}
+  input[type=date]{font-family:var(--mono);font-size:14px}
+  ::placeholder{color:var(--ink-3);opacity:1}
+
+  /* ---------- checklist ---------- */
+  .check{
+    display:grid;grid-template-columns:26px 1fr;gap:0 8px;
+    padding:12px 14px;border-top:1px solid var(--line);
+  }
+  .check:first-child{border-top:0}
+  .check-n{
+    font-family:var(--mono);font-size:12px;font-weight:500;color:var(--accent);
+    padding-top:2px;font-variant-numeric:tabular-nums;
+  }
+  .check-main{display:flex;flex-direction:column;gap:9px;min-width:0}
+  .check-title{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  }
+  .check-title strong{font-size:14px;font-weight:600}
+  .check-note{font-size:11.5px;color:var(--ink-3);line-height:1.4}
+  .subfields{display:grid;gap:9px;grid-template-columns:1fr 1fr}
+  @media (max-width:560px){.subfields{grid-template-columns:1fr}}
+  .subfields label > span{font-size:11px;color:var(--ink-3);font-weight:600}
+
+  .seg{display:flex;gap:4px;flex:0 0 auto}
+  .seg button{
+    appearance:none;cursor:pointer;border:1px solid var(--line-2);background:var(--surface);
+    color:var(--ink-3);border-radius:7px;padding:6px 11px;
+    font-size:11.5px;font-weight:700;letter-spacing:.04em;
+  }
+  .seg button[aria-pressed="true"][data-v="PASS"]{background:var(--pass-bg);border-color:var(--pass);color:var(--pass)}
+  .seg button[aria-pressed="true"][data-v="FAIL"]{background:var(--fail-bg);border-color:var(--fail);color:var(--fail)}
+  .seg button[aria-pressed="true"][data-v="N/A"]{background:var(--na-bg);border-color:var(--na);color:var(--na)}
+
+  .yn{display:flex;gap:4px}
+  .yn button{
+    appearance:none;cursor:pointer;border:1px solid var(--line-2);background:var(--surface);
+    color:var(--ink-3);border-radius:7px;padding:8px 0;flex:1;font-size:13px;font-weight:600;
+  }
+  .yn button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-2);color:var(--accent)}
+
+  /* ---------- action bar ---------- */
+  .actionbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter:blur(8px);border-top:1px solid var(--line);
+  }
+  .actionbar-in{
+    max-width:760px;margin:0 auto;padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    display:flex;gap:10px;align-items:center;
+  }
+  .btn{
+    appearance:none;cursor:pointer;border-radius:9px;border:1px solid var(--line-2);
+    background:var(--surface);color:var(--ink);padding:11px 14px;
+    font-size:14px;font-weight:600;white-space:nowrap;
+  }
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn-primary{
+    background:var(--accent);border-color:var(--accent);color:#FFF8EC;flex:1;
+  }
+  :root[data-theme="dark"] .btn-primary{color:#20170A}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .btn-primary{color:#20170A}
+  }
+  .btn-ghost{background:transparent}
+  .btn-danger{color:var(--fail);border-color:var(--fail)}
+
+  /* ---------- book ---------- */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  .stat{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:11px 12px;
+  }
+  .stat b{
+    display:block;font-family:var(--mono);font-size:22px;font-weight:500;
+    font-variant-numeric:tabular-nums;line-height:1.15;
+  }
+  .stat span{font-size:11px;color:var(--ink-3);display:block;margin-top:2px}
+  .stat.due b{color:var(--fail)}
+
+  .row{
+    display:flex;gap:12px;align-items:center;width:100%;text-align:left;
+    padding:12px 14px;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;
+    cursor:pointer;
+  }
+  .row:first-child{border-top:0}
+  .row:hover{background:var(--surface-2)}
+  .row-main{flex:1;min-width:0}
+  .row-main b{display:block;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row-main span{display:block;font-size:12px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row-meta{text-align:right;flex:0 0 auto}
+  .row-meta .ref{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+  .pill{
+    display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;
+    padding:2px 7px;border-radius:20px;margin-top:3px;
+  }
+  .pill.ok{background:var(--pass-bg);color:var(--pass)}
+  .pill.soon{background:var(--accent-soft);color:var(--accent)}
+  .pill.over{background:var(--fail-bg);color:var(--fail)}
+
+  .empty{padding:28px 18px;text-align:center;color:var(--ink-3);font-size:13.5px}
+  .empty strong{display:block;color:var(--ink-2);font-size:14.5px;margin-bottom:4px;font-weight:600}
+
+  .search{margin-bottom:12px}
+
+  /* ---------- setup ---------- */
+  .padwrap{
+    background:#FFFFFF;border:1px solid var(--line-2);border-radius:8px;
+    position:relative;overflow:hidden;
+  }
+  .padwrap canvas{display:block;width:100%;height:130px;touch-action:none;cursor:crosshair}
+  .padwrap::after{
+    content:"";position:absolute;left:14px;right:14px;bottom:34px;
+    border-bottom:1px dashed #C6CED3;pointer-events:none;
+  }
+  .padrow{display:flex;gap:8px;margin-top:8px;align-items:center}
+  .logo-preview{
+    height:54px;max-width:150px;object-fit:contain;background:#fff;
+    border:1px solid var(--line-2);border-radius:8px;padding:5px;
+  }
+
+  /* ---------- sheet / toast ---------- */
+  .sheet{
+    position:fixed;inset:0;z-index:60;background:rgba(12,18,21,.5);
+    display:flex;align-items:flex-end;justify-content:center;padding:0;
+  }
+  .sheet[hidden]{display:none}
+  .sheet-in{
+    background:var(--surface);width:100%;max-width:760px;
+    border-radius:16px 16px 0 0;max-height:88vh;overflow:auto;
+    border:1px solid var(--line);border-bottom:0;
+  }
+  .sheet-head{
+    position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line);
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+  .sheet-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+  .kvlist{display:grid;gap:0}
+  .kvlist div{
+    display:flex;gap:12px;justify-content:space-between;
+    padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px;
+  }
+  .kvlist div:last-child{border-bottom:0}
+  .kvlist dt,.kvlist .k{color:var(--ink-3);flex:0 0 auto}
+  .kvlist .v{text-align:right;font-weight:500}
+  .kvlist .v.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  .toast{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:82px;z-index:70;
+    background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:22px;
+    font-size:13.5px;font-weight:500;box-shadow:var(--shadow);max-width:92vw;text-align:center;
+  }
+  .toast[hidden]{display:none}
+
+  .notice{
+    background:var(--accent-soft);border:1px solid var(--accent-2);color:var(--accent);
+    border-radius:var(--radius);padding:10px 12px;font-size:12.5px;margin-bottom:14px;
+  }
+  .notice[hidden]{display:none}
+
+  @media (prefers-reduced-motion:no-preference){
+    .toast{animation:pop .18s ease-out}
+    @keyframes pop{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
+  }
+</style>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+        <path d="M4 21V9l5-3v15"></path>
+        <path d="M9 21h11V13h-5"></path>
+        <path d="M15 13V8h4v5"></path>
+        <path d="M6.5 3.5c0 1-1 1.4-1 2.5"></path>
+      </svg>
+    </span>
+    <div style="flex:1;min-width:0">
+      <div class="wordmark">Sweep Certificate Book</div>
+      <div class="trading" id="trading-name">Clean Sweep Chimney Services</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-issue" aria-selected="true" aria-controls="view-issue">Issue</button>
+    <button class="tab" role="tab" id="tab-book" aria-selected="false" aria-controls="view-book">Book <span class="count" id="count-book">0</span></button>
+    <button class="tab" role="tab" id="tab-due" aria-selected="false" aria-controls="view-due" data-due="false">Due <span class="count" id="count-due">0</span></button>
+    <button class="tab" role="tab" id="tab-setup" aria-selected="false" aria-controls="view-setup">Setup</button>
+  </nav>
+</header>
+
+<main>
+  <div class="notice" id="notice" hidden></div>
+
+  <!-- ============ ISSUE ============ -->
+  <section class="view" id="view-issue" role="tabpanel" aria-labelledby="tab-issue">
+    <div class="card">
+      <div class="card-head">
+        <h2>Customer</h2>
+        <span class="hint" id="repeat-hint"></span>
+      </div>
+      <div class="card-body grid">
+        <label class="field"><span>Name</span>
+          <input type="text" id="c-name" list="past-customers" placeholder="Customer name" autocomplete="off">
+          <datalist id="past-customers"></datalist>
+        </label>
+        <div class="grid g2">
+          <label class="field"><span>Telephone</span>
+            <input type="tel" id="c-phone" placeholder="07000 000000" autocomplete="off"></label>
+          <label class="field"><span>Email</span>
+            <input type="email" id="c-email" placeholder="name@example.com" autocomplete="off"></label>
+        </div>
+        <label class="field"><span>Address</span>
+          <textarea id="c-address" rows="2" placeholder="House, street, town, county, postcode"></textarea></label>
+        <div class="grid g2">
+          <label class="field"><span>Customer on site</span>
+            <select id="c-onsite">
+              <option value="The customer was present">Present</option>
+              <option value="The customer was not present">Not present</option>
+            </select></label>
+          <label class="field"><span>Annual reminder</span>
+            <select id="c-reminder">
+              <option value="Please send me a reminder">Send a reminder</option>
+              <option value="Please do not send me a reminder">No reminder</option>
+            </select></label>
+        </div>
+        <div class="grid g2">
+          <label class="field"><span>Issued</span>
+            <input type="date" id="c-issued"></label>
+          <label class="field"><span>Expires</span>
+            <input type="date" id="c-expires"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Inspection</h2>
+        <span class="hint">Tap a result to change it</span>
+      </div>
+      <div id="checklist"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>General comments</h2></div>
+      <div class="card-body">
+        <textarea id="c-comments" rows="3" placeholder="Anything the customer should know — repairs needed, next sweep interval, access notes."></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOOK ============ -->
+  <section class="view" id="view-book" role="tabpanel" aria-labelledby="tab-book" hidden>
+    <div class="stats">
+      <div class="stat"><b id="stat-total">0</b><span>certificates</span></div>
+      <div class="stat"><b id="stat-year">0</b><span id="stat-year-label">this year</span></div>
+      <div class="stat due"><b id="stat-due">0</b><span>due within 90 days</span></div>
+    </div>
+    <label class="field search"><span class="eyebrow">Search</span>
+      <input type="text" id="book-search" placeholder="Name, address, postcode or certificate number"></label>
+    <div class="card"><div id="book-list"></div></div>
+  </section>
+
+  <!-- ============ DUE ============ -->
+  <section class="view" id="view-due" role="tabpanel" aria-labelledby="tab-due" hidden>
+    <div class="card">
+      <div class="card-head">
+        <h2>Due for a re-sweep</h2>
+        <span class="hint">Expired, or expiring within 90 days</span>
+      </div>
+      <div id="due-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ SETUP ============ -->
+  <section class="view" id="view-setup" role="tabpanel" aria-labelledby="tab-setup" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Your details</h2><span class="hint">Printed on every certificate</span></div>
+      <div class="card-body grid">
+        <div class="grid g2">
+          <label class="field"><span>Your name</span><input type="text" id="b-name"></label>
+          <label class="field"><span>Company</span><input type="text" id="b-company"></label>
+        </div>
+        <div class="grid g2">
+          <label class="field"><span>Mobile</span><input type="tel" id="b-mobile"></label>
+          <label class="field"><span>Telephone</span><input type="tel" id="b-phone"></label>
+        </div>
+        <label class="field"><span>Email</span><input type="email" id="b-email"></label>
+        <label class="field"><span>Website</span><input type="text" id="b-website"></label>
+        <label class="field"><span>Address</span><textarea id="b-address" rows="2"></textarea></label>
+        <div class="grid g2">
+          <label class="field"><span>A member of</span><input type="text" id="b-member-of" placeholder="Leave blank if none"></label>
+          <label class="field"><span>Member ID</span><input type="text" id="b-member-id" placeholder="Leave blank if none"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Signature</h2><span class="hint">Sign once — it goes on every certificate</span></div>
+      <div class="card-body">
+        <div class="padwrap"><canvas id="sigpad" width="900" height="260"></canvas></div>
+        <div class="padrow">
+          <button class="btn btn-ghost" id="sig-clear" type="button">Clear</button>
+          <button class="btn" id="sig-save" type="button">Save signature</button>
+          <span class="hint" id="sig-state" style="font-size:12px;color:var(--ink-3)"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Logo</h2><span class="hint">Optional — top-left of the certificate</span></div>
+      <div class="card-body">
+        <div class="padrow" style="margin-top:0;flex-wrap:wrap">
+          <img id="logo-preview" class="logo-preview" alt="" hidden>
+          <input type="file" id="logo-input" accept="image/png,image/jpeg" style="font-size:13px;flex:1;min-width:190px">
+          <button class="btn btn-ghost btn-danger" id="logo-clear" type="button" hidden>Remove</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Certificate numbering</h2></div>
+      <div class="card-body grid g2">
+        <label class="field"><span>Prefix</span><input type="text" id="b-prefix" placeholder="CS"></label>
+        <label class="field"><span>Next number</span><input type="text" id="b-next" inputmode="numeric" placeholder="1"></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Back up the book</h2>
+        <span class="hint" id="backup-state"></span>
+      </div>
+      <div class="card-body">
+        <p style="margin:0 0 12px;font-size:13px;color:var(--ink-2);line-height:1.5">
+          Certificates are stored on this phone, in this browser. Clear the browser's data and
+          they're gone. Save a backup file every so often — keep it in your email or cloud drive,
+          and it restores everything onto a new phone.
+        </p>
+        <div class="padrow" style="margin-top:0;flex-wrap:wrap">
+          <button class="btn" id="backup-export" type="button">Save a backup</button>
+          <label class="btn btn-ghost" style="cursor:pointer;margin:0">
+            Restore from backup
+            <input type="file" id="backup-import" accept="application/json,.json" style="display:none">
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="actionbar" id="actionbar">
+  <div class="actionbar-in">
+    <button class="btn btn-ghost" id="btn-reset" type="button">Clear</button>
+    <button class="btn btn-primary" id="btn-issue" type="button">Issue certificate &amp; make PDF</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head">
+      <h2 id="sheet-title" style="font-size:16px">Certificate</h2>
+      <button class="btn btn-ghost" id="sheet-close" type="button">Close</button>
+    </div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     1. Reference data — the real form, field for field
+     ============================================================ */
+
+  // Deliberately blank. This page sits on a public URL, so nobody who stumbles
+  // across it gets a ready-made certificate carrying someone else's business.
+  // Gareth fills these in once on his phone; they live only in his browser.
+  var DEFAULT_BUSINESS = {
+    name:"", company:"", mobile:"", phone:"", email:"",
+    website:"", address:"", memberOf:"", memberId:"", prefix:"CS"
+  };
+
+  var OPT = {
+    appliance:["Closed appliance Defra","Closed appliance","Open fire","Multi-fuel stove","Wood burning stove","Inset stove","Rayburn / Aga","Solid fuel boiler"],
+    location:["Lounge","Living room","Kitchen","Dining room","Snug","Bedroom","Conservatory","Workshop"],
+    flue:["Twin Wall Rigid, Solid Fuel Liner","Twin Wall Rigid","Flexible liner 904","Flexible liner 316","Clay lined","Pumice lined","Brick / unlined","Concrete"],
+    terminal:["Bird Guard Cowl","Anti-downdraught cowl","Rain cap","Open pot","Gas terminal","None fitted"],
+    fuel:["Locally sourced wood","Kiln dried logs","Seasoned hardwood","Smokeless fuel","Wood and smokeless mix","House coal"],
+    deposits:["Fine powder","Light soot","Heavy soot","Tar / glaze","Creosote","Bird nest","Loose debris"],
+    method:["Rotary","Traditional brush","Rotary and traditional"],
+    brush:["Nylon brush","Polypropylene brush","Wire brush","Whip head","Power sweeping head"]
+  };
+
+  // Every check drives BOTH the on-screen form and the PDF.
+  var CHECKS = [
+    { n:1, label:"Appliance", fields:[
+        {k:"appliance",     label:"Appliance",       type:"opt", opts:"appliance"},
+        {k:"location",      label:"Location",        type:"opt", opts:"location"},
+        {k:"wetInstall",    label:"Wet installation",type:"yn"},
+        {k:"smokeZone",     label:"Smoke control zone", type:"yn"}
+      ],
+      detail:function(c){ return [c.appliance, c.location && ("Location: "+c.location),
+        "Wet installation: "+yn(c.wetInstall), "Smoke Control Zone: "+yn(c.smokeZone)].filter(Boolean).join("  ·  "); } },
+
+    { n:2, label:"Flue construction / condition", fields:[
+        {k:"flue", label:"Construction", type:"opt", opts:"flue"}
+      ], detail:function(c){ return c.flue; } },
+
+    { n:3, label:"Terminals", fields:[
+        {k:"terminal", label:"Terminal fitted", type:"opt", opts:"terminal"}
+      ], detail:function(c){ return c.terminal; } },
+
+    { n:4, label:"Fuels used & storage", fields:[
+        {k:"fuel", label:"Fuel", type:"opt", opts:"fuel"}
+      ],
+      note:"For efficient burning, fuel moisture content needs to be less than 20%.",
+      detail:function(c){ return c.fuel; } },
+
+    { n:5, label:"Deposits removed", fields:[
+        {k:"deposits", label:"Deposits", type:"opt", opts:"deposits"}
+      ], detail:function(c){ return c.deposits; } },
+
+    { n:6, label:"Smoke evacuation test", fields:[], detail:function(){ return ""; } },
+
+    { n:7, label:"Ventilation", fields:[], detail:function(){ return ""; } },
+
+    { n:8, label:"Alarms", fields:[
+        {k:"coAlarm",    label:"Working CO alarm",    type:"yn"},
+        {k:"smokeAlarm", label:"Working smoke alarm", type:"yn"}
+      ],
+      detail:function(c){ return "Working CO Alarm: "+yn(c.coAlarm)+"  ·  Working Smoke Alarm: "+yn(c.smokeAlarm); } },
+
+    { n:9, label:"CCTV inspected", fields:[], detail:function(){ return ""; } },
+
+    { n:10, label:"Does the installation meet current standards?", fields:[],
+      note:"This is not a certificate of guarantee or warranty. Terms and conditions apply.",
+      detail:function(){ return ""; } },
+
+    { n:11, label:"Sweeping method / brush type", fields:[
+        {k:"method", label:"Method", type:"opt", opts:"method"},
+        {k:"brush",  label:"Brush",  type:"opt", opts:"brush"}
+      ], detail:function(c){ return [c.method, c.brush].filter(Boolean).join("  ·  "); } }
+  ];
+
+  var DECLARATION = "I have seen the sweep's current ID, and the site has been left clean and tidy. I agree to my details being stored securely.";
+  var KEEPSAFE = "Please keep this certificate somewhere safe — your insurer may ask to see it in the event of a claim. Whatever fuel you burn, regular sweeping matters: always use a professional sweep.";
+
+  function yn(v){ return v ? "Yes" : "No"; }
+
+  /* ============================================================
+     2. State
+     ============================================================ */
+
+  var storageBroken = false;
+  var state = {
+    view:"issue",
+    business: Object.assign({}, DEFAULT_BUSINESS),
+    brand: { logo:null, logoRatio:1, signature:null },
+    certs: [],
+    cert: blankCert(),
+    search:""
+  };
+
+  function today(){ var d = new Date(); return iso(d); }
+  function iso(d){
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function plusYear(dateStr){
+    var p = dateStr.split("-");
+    var d = new Date(Number(p[0])+1, Number(p[1])-1, Number(p[2]));
+    return iso(d);
+  }
+
+  function blankCert(){
+    var t = today();
+    return {
+      name:"", phone:"", email:"", address:"",
+      onSite:"The customer was present",
+      reminder:"Please send me a reminder",
+      issued:t, expires:plusYear(t),
+      appliance:OPT.appliance[0], location:OPT.location[0],
+      wetInstall:false, smokeZone:false,
+      flue:OPT.flue[0], terminal:OPT.terminal[0], fuel:OPT.fuel[0],
+      deposits:OPT.deposits[0], method:OPT.method[0], brush:OPT.brush[0],
+      coAlarm:true, smokeAlarm:true,
+      results:{1:"PASS",2:"PASS",3:"PASS",4:"PASS",5:"PASS",6:"PASS",7:"N/A",8:"PASS",9:"N/A",10:"PASS",11:"PASS"},
+      comments:""
+    };
+  }
+
+  /* ============================================================
+     3. Small DOM helpers
+     ============================================================ */
+
+  function $(id){ return document.getElementById(id); }
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if(cls) n.className = cls;
+    if(text != null) n.textContent = text;
+    return n;
+  }
+  var toastTimer = null;
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.hidden = true; }, 3200);
+  }
+  function fmtDate(s){
+    if(!s) return "—";
+    var p = String(s).split("-");
+    if(p.length !== 3) return s;
+    return p[2]+"."+p[1]+"."+p[0];
+  }
+  function daysUntil(s){
+    if(!s) return null;
+    var p = s.split("-");
+    var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+    var now = new Date(); now.setHours(0,0,0,0);
+    return Math.round((d - now) / 86400000);
+  }
+
+  /* ============================================================
+     4. Build the issue form
+     ============================================================ */
+
+  function buildChecklist(){
+    var wrap = $("checklist");
+    wrap.textContent = "";
+
+    CHECKS.forEach(function(item){
+      var row = el("div","check");
+      row.appendChild(el("div","check-n", item.n + "."));
+
+      var main = el("div","check-main");
+
+      var head = el("div","check-title");
+      head.appendChild(el("strong", null, item.label));
+
+      var seg = el("div","seg");
+      ["PASS","FAIL","N/A"].forEach(function(v){
+        var b = el("button", null, v);
+        b.type = "button";
+        b.dataset.v = v;
+        b.setAttribute("aria-pressed", state.cert.results[item.n] === v ? "true" : "false");
+        b.setAttribute("aria-label", item.label + ": " + v);
+        b.addEventListener("click", function(){
+          state.cert.results[item.n] = v;
+          Array.prototype.forEach.call(seg.children, function(c){
+            c.setAttribute("aria-pressed", c.dataset.v === v ? "true" : "false");
+          });
+        });
+        seg.appendChild(b);
+      });
+      head.appendChild(seg);
+      main.appendChild(head);
+
+      if(item.fields.length){
+        var sub = el("div","subfields");
+        item.fields.forEach(function(f){
+          var lab = el("label","field");
+          lab.appendChild(el("span", null, f.label));
+          if(f.type === "opt"){
+            var inp = document.createElement("input");
+            inp.type = "text";
+            inp.id = "f-" + f.k;
+            inp.value = state.cert[f.k] || "";
+            inp.setAttribute("list", "dl-" + f.k);
+            inp.autocomplete = "off";
+            inp.addEventListener("input", function(){ state.cert[f.k] = inp.value; });
+            var dl = document.createElement("datalist");
+            dl.id = "dl-" + f.k;
+            OPT[f.opts].forEach(function(o){
+              var op = document.createElement("option"); op.value = o; dl.appendChild(op);
+            });
+            lab.appendChild(inp); lab.appendChild(dl);
+          } else {
+            var ynwrap = el("div","yn");
+            [["Yes",true],["No",false]].forEach(function(pair){
+              var b = el("button", null, pair[0]);
+              b.type = "button";
+              b.setAttribute("aria-pressed", state.cert[f.k] === pair[1] ? "true" : "false");
+              b.addEventListener("click", function(){
+                state.cert[f.k] = pair[1];
+                Array.prototype.forEach.call(ynwrap.children, function(c, i){
+                  c.setAttribute("aria-pressed", (i === 0) === pair[1] ? "true" : "false");
+                });
+              });
+              ynwrap.appendChild(b);
+            });
+            lab.appendChild(ynwrap);
+          }
+          sub.appendChild(lab);
+        });
+        main.appendChild(sub);
+      }
+
+      if(item.note) main.appendChild(el("div","check-note", item.note));
+
+      row.appendChild(main);
+      wrap.appendChild(row);
+    });
+  }
+
+  function bindCustomerFields(){
+    var map = {
+      "c-name":"name", "c-phone":"phone", "c-email":"email", "c-address":"address",
+      "c-onsite":"onSite", "c-reminder":"reminder", "c-comments":"comments"
+    };
+    Object.keys(map).forEach(function(id){
+      var node = $(id);
+      node.addEventListener("input", function(){ state.cert[map[id]] = node.value; });
+      node.addEventListener("change", function(){ state.cert[map[id]] = node.value; });
+    });
+
+    $("c-issued").addEventListener("change", function(){
+      state.cert.issued = $("c-issued").value;
+      if(state.cert.issued){
+        state.cert.expires = plusYear(state.cert.issued);
+        $("c-expires").value = state.cert.expires;
+      }
+    });
+    $("c-expires").addEventListener("change", function(){ state.cert.expires = $("c-expires").value; });
+
+    $("c-name").addEventListener("change", function(){ prefillFromHistory($("c-name").value); });
+  }
+
+  function prefillFromHistory(name){
+    if(!name) return;
+    var prev = state.certs.filter(function(c){
+      return (c.name || "").toLowerCase() === name.toLowerCase();
+    })[0];
+    if(!prev) { $("repeat-hint").textContent = ""; return; }
+    ["phone","email","address"].forEach(function(k){
+      if(!state.cert[k] && prev[k]){
+        state.cert[k] = prev[k];
+        $("c-" + (k === "address" ? "address" : k)).value = prev[k];
+      }
+    });
+    ["appliance","location","flue","terminal","fuel","method","brush"].forEach(function(k){
+      if(prev[k]){
+        state.cert[k] = prev[k];
+        var f = $("f-" + k); if(f) f.value = prev[k];
+      }
+    });
+    $("repeat-hint").textContent = "Repeat customer — last swept " + fmtDate(prev.issued);
+  }
+
+  function writeFormFromState(){
+    $("c-name").value = state.cert.name;
+    $("c-phone").value = state.cert.phone;
+    $("c-email").value = state.cert.email;
+    $("c-address").value = state.cert.address;
+    $("c-onsite").value = state.cert.onSite;
+    $("c-reminder").value = state.cert.reminder;
+    $("c-issued").value = state.cert.issued;
+    $("c-expires").value = state.cert.expires;
+    $("c-comments").value = state.cert.comments;
+    buildChecklist();
+  }
+
+  /* ============================================================
+     5. The PDF
+     ============================================================ */
+
+  var PDF = {
+    ink:"#16202A", ink2:"#4A575F", ink3:"#7A868D",
+    line:"#C9D2D7", soft:"#F2F5F6", accent:"#8A5A0E",
+    pass:"#2C6A4B", passBg:"#E4F0E9", fail:"#9E2B24", failBg:"#F8E6E4",
+    na:"#6B767D", naBg:"#ECEFF1"
+  };
+
+  function buildPdf(cert, biz, brand){
+    var jsPDFctor = window.jspdf && window.jspdf.jsPDF;
+    if(!jsPDFctor) throw new Error("pdf-lib-missing");
+
+    var d = new jsPDFctor({ unit:"mm", format:"a4", compress:true });
+    var M = 13, W = 210, R = W - M, CW = R - M, BOTTOM = 282;
+    var y = M;
+
+    function font(size, style, color){
+      d.setFont("helvetica", style || "normal");
+      d.setFontSize(size);
+      d.setTextColor(color || PDF.ink);
+    }
+    function stroke(c, w){ d.setDrawColor(c || PDF.line); d.setLineWidth(w || 0.25); }
+    function box(x, yy, w, h, fill){
+      if(fill){ d.setFillColor(fill); stroke(PDF.line); d.rect(x, yy, w, h, "FD"); }
+      else { stroke(PDF.line); d.rect(x, yy, w, h, "S"); }
+    }
+    function label(text, x, yy){
+      font(6.4, "bold", PDF.ink3);
+      d.text(String(text).toUpperCase(), x, yy);
+    }
+    function wrap(text, w, size, style){
+      d.setFont("helvetica", style || "normal");
+      d.setFontSize(size);
+      return d.splitTextToSize(String(text == null ? "" : text), w);
+    }
+    // key/value line, returns the y after it
+    function kv(x, yy, k, v, kw, vw){
+      font(7, "bold", PDF.ink3);
+      d.text(String(k), x, yy);
+      var lines = wrap(v || "—", vw, 8.2, "normal");
+      font(8.2, "normal", PDF.ink);
+      d.text(lines, x + kw, yy);
+      return yy + Math.max(4.4, lines.length * 3.7 + 0.7);
+    }
+    function chip(result, x, yy){
+      var fg = PDF.na, bg = PDF.naBg;
+      if(result === "PASS"){ fg = PDF.pass; bg = PDF.passBg; }
+      else if(result === "FAIL"){ fg = PDF.fail; bg = PDF.failBg; }
+      var w = 17, h = 6.2;
+      d.setFillColor(bg); d.setDrawColor(fg); d.setLineWidth(0.3);
+      d.roundedRect(x, yy, w, h, 1.4, 1.4, "FD");
+      font(7.4, "bold", fg);
+      d.text(result, x + w / 2, yy + 4.25, { align:"center" });
+    }
+
+    /* ---- header ---- */
+    var titleTop = y + 7;
+    if(brand.logo){
+      var lw = 26, lh = Math.min(18, lw / (brand.logoRatio || 1));
+      try { d.addImage(brand.logo, "PNG", M, y, lw, lh); } catch(e){}
+    }
+    font(16.5, "bold", PDF.ink);
+    d.text("CHIMNEY SWEEPING CERTIFICATE", R, titleTop, { align:"right" });
+    font(8.6, "normal", PDF.ink2);
+    d.text(biz.company || biz.name || "", R, titleTop + 5.2, { align:"right" });
+    y = titleTop + 9.5;
+    stroke(PDF.accent, 0.7); d.line(M, y, R, y);
+    y += 5;
+
+    /* ---- swept by / member ---- */
+    var colW = (CW - 6) / 2, rx = M + colW + 6;
+    var boxTop = y, yl = y + 5.5, yr = y + 5.5;
+
+    label("Swept by", M + 3, yl); yl += 4.4;
+    yl = kv(M + 3, yl, "Name", biz.name, 20, colW - 26);
+    yl = kv(M + 3, yl, "Company", biz.company, 20, colW - 26);
+    if(biz.mobile)  yl = kv(M + 3, yl, "Mobile", biz.mobile, 20, colW - 26);
+    if(biz.phone)   yl = kv(M + 3, yl, "Telephone", biz.phone, 20, colW - 26);
+    if(biz.email)   yl = kv(M + 3, yl, "Email", biz.email, 20, colW - 26);
+    if(biz.website) yl = kv(M + 3, yl, "Website", biz.website, 20, colW - 26);
+    yl = kv(M + 3, yl, "Address", biz.address, 20, colW - 26);
+
+    label("Certificate", rx + 3, yr); yr += 4.4;
+    yr = kv(rx + 3, yr, "Number", cert.ref, 20, colW - 26);
+    yr = kv(rx + 3, yr, "Issued", fmtDate(cert.issued), 20, colW - 26);
+    yr = kv(rx + 3, yr, "Expires", fmtDate(cert.expires), 20, colW - 26);
+    if(biz.memberOf) yr = kv(rx + 3, yr, "Member of", biz.memberOf, 20, colW - 26);
+    if(biz.memberId) yr = kv(rx + 3, yr, "Member ID", biz.memberId, 20, colW - 26);
+
+    if(brand.signature){
+      try { d.addImage(brand.signature, "PNG", rx + 3, yr + 0.5, 34, 11); } catch(e){}
+    }
+    yr += 12.5;
+    stroke(PDF.line); d.line(rx + 3, yr, rx + colW - 3, yr);
+    font(6.4, "bold", PDF.ink3); d.text("SIGNED (SWEEP)", rx + 3, yr + 3.4);
+    yr += 5;
+
+    var panelBottom = Math.max(yl, yr) + 2;
+    box(M, boxTop, colW, panelBottom - boxTop);
+    box(rx, boxTop, colW, panelBottom - boxTop);
+    y = panelBottom + 4;
+
+    /* ---- customer / declaration ---- */
+    boxTop = y; yl = y + 5.5; yr = y + 5.5;
+
+    label("Customer", M + 3, yl); yl += 4.4;
+    yl = kv(M + 3, yl, "Name", cert.name, 20, colW - 26);
+    if(cert.phone) yl = kv(M + 3, yl, "Telephone", cert.phone, 20, colW - 26);
+    if(cert.email) yl = kv(M + 3, yl, "Email", cert.email, 20, colW - 26);
+    yl = kv(M + 3, yl, "Address", cert.address, 20, colW - 26);
+    yl = kv(M + 3, yl, "On site", cert.onSite, 20, colW - 26);
+    yl = kv(M + 3, yl, "Reminder", cert.reminder, 20, colW - 26);
+
+    label("Customer declaration", rx + 3, yr); yr += 4.4;
+    var decl = wrap(DECLARATION, colW - 6, 7.6, "normal");
+    font(7.6, "normal", PDF.ink2);
+    d.text(decl, rx + 3, yr);
+    yr += decl.length * 3.4 + 5;
+    stroke(PDF.line); d.line(rx + 3, yr, rx + colW - 3, yr);
+    font(6.4, "bold", PDF.ink3); d.text("SIGNED (CUSTOMER)", rx + 3, yr + 3.4);
+    yr += 5;
+
+    panelBottom = Math.max(yl, yr) + 2;
+    box(M, boxTop, colW, panelBottom - boxTop);
+    box(rx, boxTop, colW, panelBottom - boxTop);
+    y = panelBottom + 5;
+
+    /* ---- checklist ---- */
+    function ensure(h){
+      if(y + h > BOTTOM){ d.addPage(); y = M; }
+    }
+    label("Inspection", M, y); y += 3.5;
+    stroke(PDF.line); d.line(M, y, R, y); y += 1;
+
+    CHECKS.forEach(function(item){
+      var detail = (item.detail(cert) || "").trim();
+      var note = item.note || "";
+      var dLines = detail ? wrap(detail, CW - 34, 7.4, "normal") : [];
+      var nLines = note ? wrap(note, CW - 34, 6.8, "italic") : [];
+      var h = 6.4 + dLines.length * 3.3 + nLines.length * 3.1 + 2.6;
+      ensure(h);
+
+      font(7.6, "bold", PDF.accent);
+      d.text(item.n + ".", M + 1, y + 4.6);
+      font(8.8, "bold", PDF.ink);
+      d.text(wrap(item.label, CW - 36, 8.8, "bold"), M + 8, y + 4.6);
+
+      var ty = y + 8.2;
+      if(dLines.length){
+        font(7.4, "normal", PDF.ink2);
+        d.text(dLines, M + 8, ty);
+        ty += dLines.length * 3.3;
+      }
+      if(nLines.length){
+        font(6.8, "italic", PDF.ink3);
+        d.text(nLines, M + 8, ty);
+      }
+
+      chip(cert.results[item.n] || "N/A", R - 18, y + 1.4);
+      y += h;
+      stroke(PDF.line); d.line(M, y, R, y);
+    });
+
+    /* ---- comments ---- */
+    y += 4;
+    var cLines = wrap(cert.comments || "No comments recorded.", CW - 8, 8, "normal");
+    var cH = Math.max(18, cLines.length * 3.6 + 11);
+    ensure(cH + 4);
+    box(M, y, CW, cH, PDF.soft);
+    label("General comments", M + 4, y + 5.5);
+    font(8, "normal", PDF.ink);
+    d.text(cLines, M + 4, y + 10.5);
+    y += cH + 4;
+
+    /* ---- footers on every page ---- */
+    var pages = d.getNumberOfPages();
+    for(var p = 1; p <= pages; p++){
+      d.setPage(p);
+      stroke(PDF.line); d.line(M, 286, R, 286);
+      var keep = wrap(KEEPSAFE, CW - 26, 6.6, "normal");
+      font(6.6, "normal", PDF.ink3);
+      d.text(keep, M, 289.5);
+      font(6.6, "bold", PDF.ink3);
+      d.text(cert.ref + "  ·  " + p + "/" + pages, R, 289.5, { align:"right" });
+    }
+
+    return d;
+  }
+
+  function pdfFilename(cert){
+    var who = (cert.name || "customer").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return "Chimney-Sweeping-Certificate-" + (who || "customer") + "-" + cert.issued + ".pdf";
+  }
+
+  // On a phone this opens the native share sheet, so the certificate goes
+  // straight into WhatsApp or Mail. On a desktop it falls back to a download.
+  async function deliverFile(blob, filename, title){
+    var file = null;
+    try { file = new File([blob], filename, { type: blob.type }); } catch(e){}
+    if(file && navigator.share && navigator.canShare && navigator.canShare({ files:[file] })){
+      try {
+        await navigator.share({ files:[file], title: title });
+        return "shared";
+      } catch(err){
+        if(err && err.name === "AbortError") return "cancelled";
+        // anything else: fall through to a download
+      }
+    }
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 8000);
+    return "downloaded";
+  }
+
+  async function offerPdf(cert){
+    var doc;
+    try {
+      doc = buildPdf(cert, state.business, state.brand);
+    } catch(err){
+      toast("Couldn't build the PDF. Reload the page and try again.");
+      return false;
+    }
+    var how = await deliverFile(doc.output("blob"), pdfFilename(cert), "Chimney sweeping certificate");
+    if(how === "shared") toast("Sent to " + (cert.name || "the customer") + ".");
+    else if(how === "cancelled") toast("Not sent — the certificate is still in your book.");
+    else toast("PDF saved to your downloads.");
+    return true;
+  }
+
+  /* ============================================================
+     6. Storage — this phone's browser, and a backup file
+     ============================================================ */
+
+  var LS = {
+    business:"sweepbook.business",
+    brand:"sweepbook.brand",
+    certs:"sweepbook.certs",
+    counter:"sweepbook.counter"
+  };
+
+  function lsGet(key, fallback){
+    try {
+      var raw = window.localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch(e){ return fallback; }
+  }
+  function lsSet(key, value){
+    try { window.localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch(e){ storageBroken = true; return false; }
+  }
+
+  function notice(msg){
+    var n = $("notice");
+    if(!msg){ n.hidden = true; return; }
+    n.textContent = msg;
+    n.hidden = false;
+  }
+
+  function loadEverything(){
+    var probe = lsSet("sweepbook.probe", 1);
+    if(!probe){
+      notice("This browser won't let the page store anything, so the book can't be kept. Turn off private browsing, or use a different browser.");
+    }
+    state.business = Object.assign({}, DEFAULT_BUSINESS, lsGet(LS.business, {}));
+    var brand = lsGet(LS.brand, {});
+    state.brand.logo = brand.logo || null;
+    state.brand.logoRatio = brand.logoRatio || 1;
+    state.brand.signature = brand.signature || null;
+    var certs = lsGet(LS.certs, []);
+    state.certs = Array.isArray(certs) ? certs : [];
+
+    writeSetupFromState();
+    renderBrand();
+    refreshTrading();
+    renderBook();
+    renderDue();
+    renderCustomerList();
+
+    if(probe && !state.business.name && !state.business.company){
+      notice("First time here: fill in Setup, then sign once. Those details print on every certificate.");
+    }
+  }
+
+  function refreshTrading(){
+    $("trading-name").textContent =
+      state.business.company || state.business.name || "Add your details in Setup";
+  }
+
+  function saveBusiness(){
+    if(!lsSet(LS.business, state.business)) toast("Couldn't save your details on this phone.");
+  }
+  function saveBrand(){
+    var ok = lsSet(LS.brand, {
+      logo: state.brand.logo, logoRatio: state.brand.logoRatio, signature: state.brand.signature
+    });
+    if(!ok) toast("Couldn't store that image — try a smaller one.");
+  }
+  function saveCerts(){
+    var ok = lsSet(LS.certs, state.certs);
+    if(!ok) toast("Storage is full. Back up the book, then delete some old certificates.");
+    return ok;
+  }
+
+  function nextRef(){
+    var year = new Date().getFullYear();
+    var prefix = state.business.prefix || "CS";
+    var c = lsGet(LS.counter, {});
+    var n = (c.year === year ? (c.n || 0) : 0) + 1;
+    lsSet(LS.counter, { year: year, n: n });
+    return prefix + "-" + year + "-" + String(n).padStart(4, "0");
+  }
+
+  function exportBackup(){
+    var payload = {
+      format:"sweep-certificate-book",
+      version:1,
+      exported:new Date().toISOString(),
+      business:state.business,
+      brand:state.brand,
+      counter:lsGet(LS.counter, {}),
+      certificates:state.certs
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    deliverFile(blob, "sweep-book-backup-" + today() + ".json", "Sweep book backup");
+    lsSet("sweepbook.lastBackup", today());
+    renderBackupState();
+  }
+
+  function importBackup(file){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var data;
+      try { data = JSON.parse(reader.result); }
+      catch(e){ toast("That file isn't a sweep book backup."); return; }
+      if(!data || data.format !== "sweep-certificate-book" || !Array.isArray(data.certificates)){
+        toast("That file isn't a sweep book backup.");
+        return;
+      }
+      state.business = Object.assign({}, DEFAULT_BUSINESS, data.business || {});
+      state.brand.logo = (data.brand && data.brand.logo) || null;
+      state.brand.logoRatio = (data.brand && data.brand.logoRatio) || 1;
+      state.brand.signature = (data.brand && data.brand.signature) || null;
+      state.certs = data.certificates;
+      if(data.counter) lsSet(LS.counter, data.counter);
+      saveBusiness(); saveBrand(); saveCerts();
+      writeSetupFromState(); renderBrand(); refreshTrading();
+      renderBook(); renderDue(); renderCustomerList();
+      notice("");
+      toast("Restored " + state.certs.length + " certificate" + (state.certs.length === 1 ? "" : "s") + ".");
+    };
+    reader.onerror = function(){ toast("Couldn't read that file."); };
+    reader.readAsText(file);
+  }
+
+  function renderBackupState(){
+    var last = lsGet("sweepbook.lastBackup", null);
+    $("backup-state").textContent = last
+      ? "Last backed up " + fmtDate(last)
+      : "Never backed up";
+  }
+
+  /* ============================================================
+     7. Issue
+     ============================================================ */
+
+  async function issueCertificate(){
+    var c = state.cert;
+    if(!c.name.trim()){ $("c-name").focus(); toast("Add the customer's name first."); return; }
+    if(!c.address.trim()){ $("c-address").focus(); toast("Add the address the appliance is at."); return; }
+
+    var btn = $("btn-issue");
+    btn.disabled = true;
+    btn.textContent = "Preparing…";
+
+    var ref = nextRef();
+    var record = Object.assign({}, c, {
+      ref: ref,
+      results: Object.assign({}, c.results),
+      createdAt: Date.now(),
+      business: Object.assign({}, state.business)
+    });
+
+    state.certs.unshift(record);
+    saveCerts();
+    renderBook();
+    renderDue();
+    renderCustomerList();
+
+    btn.disabled = false;
+    btn.textContent = "Issue certificate & make PDF";
+
+    await offerPdf(record);
+
+    state.cert = blankCert();
+    writeFormFromState();
+    $("repeat-hint").textContent = "";
+  }
+
+  /* ============================================================
+     8. Rendering — book, due, detail
+     ============================================================ */
+
+  function statusOf(cert){
+    var d = daysUntil(cert.expires);
+    if(d === null) return { cls:"ok", text:"Valid" };
+    if(d < 0) return { cls:"over", text:"Overdue" };
+    if(d <= 90) return { cls:"soon", text:d + "d left" };
+    return { cls:"ok", text:"Valid" };
+  }
+
+  function certRow(cert){
+    var b = el("button","row");
+    b.type = "button";
+    var main = el("div","row-main");
+    main.appendChild(el("b", null, cert.name || "Unnamed"));
+    main.appendChild(el("span", null, (cert.address || "").split("\n").join(", ")));
+    b.appendChild(main);
+
+    var meta = el("div","row-meta");
+    meta.appendChild(el("div","ref", cert.ref || ""));
+    var st = statusOf(cert);
+    var pill = el("span","pill " + st.cls, st.text);
+    meta.appendChild(pill);
+    b.appendChild(meta);
+
+    b.addEventListener("click", function(){ openCert(cert); });
+    return b;
+  }
+
+  function renderBook(){
+    var list = $("book-list");
+    list.textContent = "";
+    var q = state.search.trim().toLowerCase();
+    var rows = state.certs.filter(function(c){
+      if(!q) return true;
+      return ((c.name||"") + " " + (c.address||"") + " " + (c.ref||"")).toLowerCase().indexOf(q) !== -1;
+    });
+
+    if(!rows.length){
+      var e = el("div","empty");
+      e.appendChild(el("strong", null, state.certs.length ? "Nothing matches that" : "No certificates yet"));
+      e.appendChild(el("div", null, state.certs.length
+        ? "Try a surname, a postcode or a certificate number."
+        : "Issue your first one from the Issue tab — it'll appear here with its expiry date."));
+      list.appendChild(e);
+    } else {
+      rows.forEach(function(c){ list.appendChild(certRow(c)); });
+    }
+
+    var year = new Date().getFullYear();
+    $("stat-total").textContent = state.certs.length;
+    $("stat-year").textContent = state.certs.filter(function(c){
+      return (c.issued || "").slice(0,4) === String(year);
+    }).length;
+    $("stat-year-label").textContent = "in " + year;
+    var due = dueList();
+    $("stat-due").textContent = due.length;
+    $("count-book").textContent = state.certs.length;
+    $("count-due").textContent = due.length;
+    $("tab-due").dataset.due = due.length ? "true" : "false";
+  }
+
+  function dueList(){
+    return state.certs.filter(function(c){
+      var d = daysUntil(c.expires);
+      return d !== null && d <= 90;
+    }).sort(function(a,b){ return daysUntil(a.expires) - daysUntil(b.expires); });
+  }
+
+  function renderDue(){
+    var list = $("due-list");
+    list.textContent = "";
+    var rows = dueList();
+    if(!rows.length){
+      var e = el("div","empty");
+      e.appendChild(el("strong", null, "Nothing due"));
+      e.appendChild(el("div", null, "Certificates show up here in the 90 days before they run out."));
+      list.appendChild(e);
+      return;
+    }
+    rows.forEach(function(c){ list.appendChild(certRow(c)); });
+  }
+
+  function renderCustomerList(){
+    var dl = $("past-customers");
+    dl.textContent = "";
+    var seen = {};
+    state.certs.forEach(function(c){
+      if(c.name && !seen[c.name]){
+        seen[c.name] = true;
+        var o = document.createElement("option");
+        o.value = c.name;
+        dl.appendChild(o);
+      }
+    });
+  }
+
+  function openCert(cert){
+    var body = $("sheet-body");
+    body.textContent = "";
+    $("sheet-title").textContent = cert.name || "Certificate";
+
+    var kvl = el("div","kvlist");
+    function line(k, v, mono){
+      var row = el("div");
+      row.appendChild(el("span","k", k));
+      row.appendChild(el("span","v" + (mono ? " mono" : ""), v || "—"));
+      kvl.appendChild(row);
+    }
+    line("Certificate", cert.ref, true);
+    line("Issued", fmtDate(cert.issued), true);
+    line("Expires", fmtDate(cert.expires), true);
+    line("Telephone", cert.phone);
+    line("Email", cert.email);
+    line("Address", (cert.address || "").split("\n").join(", "));
+    line("Appliance", cert.appliance);
+    line("Flue", cert.flue);
+    line("Deposits", cert.deposits);
+    var fails = CHECKS.filter(function(i){ return cert.results && cert.results[i.n] === "FAIL"; })
+                      .map(function(i){ return i.n + ". " + i.label; });
+    line("Failed items", fails.length ? fails.join(", ") : "None");
+    body.appendChild(kvl);
+
+    if(cert.comments){
+      var cm = el("div");
+      cm.appendChild(el("div","eyebrow","Comments"));
+      cm.appendChild(el("div", null, cert.comments));
+      body.appendChild(cm);
+    }
+
+    var actions = el("div","padrow");
+    actions.style.marginTop = "0";
+    actions.style.flexWrap = "wrap";
+
+    var again = el("button","btn btn-primary","Make the PDF again");
+    again.type = "button";
+    again.style.flex = "1 1 160px";
+    again.addEventListener("click", function(){ offerPdf(cert); });
+    actions.appendChild(again);
+
+    var rebook = el("button","btn","Start a re-sweep");
+    rebook.type = "button";
+    rebook.addEventListener("click", function(){
+      var fresh = blankCert();
+      ["name","phone","email","address","appliance","location","flue","terminal","fuel","method","brush"]
+        .forEach(function(k){ if(cert[k]) fresh[k] = cert[k]; });
+      fresh.wetInstall = !!cert.wetInstall;
+      fresh.smokeZone = !!cert.smokeZone;
+      state.cert = fresh;
+      writeFormFromState();
+      closeSheet();
+      selectTab("issue");
+      toast("Started a re-sweep for " + (cert.name || "this customer") + ".");
+    });
+    actions.appendChild(rebook);
+
+    var copy = el("button","btn btn-ghost","Copy reminder text");
+    copy.type = "button";
+    copy.addEventListener("click", function(){
+      var msg = "Hi " + (cert.name || "there") + ", " + (state.business.name || "your sweep") + " here from "
+        + (state.business.company || "") + ". Your chimney sweep certificate " + cert.ref
+        + " runs out on " + fmtDate(cert.expires) + " — would you like me to book you in for this year's sweep?";
+      copyText(msg);
+    });
+    actions.appendChild(copy);
+
+    body.appendChild(actions);
+
+    var del = el("button","btn btn-ghost btn-danger","Delete this certificate");
+    del.type = "button";
+    del.addEventListener("click", function(){
+      if(del.dataset.armed !== "1"){
+        del.dataset.armed = "1";
+        del.textContent = "Tap again to delete";
+        return;
+      }
+      state.certs = state.certs.filter(function(x){ return x.ref !== cert.ref; });
+      saveCerts();
+      renderBook(); renderDue(); renderCustomerList();
+      closeSheet();
+      toast("Certificate " + cert.ref + " deleted.");
+    });
+    body.appendChild(del);
+
+    $("sheet").hidden = false;
+  }
+
+  function closeSheet(){ $("sheet").hidden = true; }
+
+  function copyText(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(
+        function(){ toast("Reminder copied — paste it into a message."); },
+        function(){ fallbackCopy(text); }
+      );
+    } else fallbackCopy(text);
+  }
+  function fallbackCopy(text){
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); toast("Reminder copied."); }
+    catch(e){ toast("Couldn't copy — select the text by hand."); }
+    document.body.removeChild(ta);
+  }
+
+  /* ============================================================
+     9. Setup — details, signature, logo
+     ============================================================ */
+
+  var BIZ_FIELDS = {
+    "b-name":"name", "b-company":"company", "b-mobile":"mobile", "b-phone":"phone",
+    "b-email":"email", "b-website":"website", "b-address":"address",
+    "b-member-of":"memberOf", "b-member-id":"memberId", "b-prefix":"prefix"
+  };
+
+  function writeSetupFromState(){
+    Object.keys(BIZ_FIELDS).forEach(function(id){
+      $(id).value = state.business[BIZ_FIELDS[id]] || "";
+    });
+  }
+
+  function bindSetup(){
+    var saveTimer = null;
+    Object.keys(BIZ_FIELDS).forEach(function(id){
+      $(id).addEventListener("input", function(){
+        state.business[BIZ_FIELDS[id]] = $(id).value;
+        refreshTrading();
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveBusiness, 500);
+      });
+    });
+
+    $("b-next").addEventListener("change", function(){
+      var n = parseInt($("b-next").value, 10);
+      if(isNaN(n) || n < 1) return;
+      lsSet(LS.counter, { year:new Date().getFullYear(), n:n - 1 });
+      toast("Next certificate will be number " + n + ".");
+    });
+
+    // --- signature pad ---
+    var canvas = $("sigpad"), ctx = canvas.getContext("2d");
+    var drawing = false, dirty = false, last = null;
+    ctx.lineWidth = 3.4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#10161A";
+
+    function pos(ev){
+      var r = canvas.getBoundingClientRect();
+      return {
+        x: (ev.clientX - r.left) * (canvas.width / r.width),
+        y: (ev.clientY - r.top) * (canvas.height / r.height)
+      };
+    }
+    canvas.addEventListener("pointerdown", function(ev){
+      drawing = true; dirty = true; last = pos(ev);
+      canvas.setPointerCapture(ev.pointerId);
+      ev.preventDefault();
+    });
+    canvas.addEventListener("pointermove", function(ev){
+      if(!drawing) return;
+      var p = pos(ev);
+      ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+      last = p;
+      ev.preventDefault();
+    });
+    ["pointerup","pointercancel","pointerleave"].forEach(function(t){
+      canvas.addEventListener(t, function(){ drawing = false; });
+    });
+
+    $("sig-clear").addEventListener("click", function(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      dirty = false;
+      $("sig-state").textContent = "Cleared — sign above, then save.";
+    });
+    $("sig-save").addEventListener("click", async function(){
+      if(!dirty && !state.brand.signature){ $("sig-state").textContent = "Sign in the box first."; return; }
+      state.brand.signature = canvas.toDataURL("image/png");
+      await saveBrand();
+      $("sig-state").textContent = "Signature saved.";
+    });
+
+    // --- logo ---
+    $("logo-input").addEventListener("change", function(){
+      var file = $("logo-input").files && $("logo-input").files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        var img = new Image();
+        img.onload = async function(){
+          var maxW = 420;
+          var scale = Math.min(1, maxW / img.width);
+          var cw = Math.round(img.width * scale), ch = Math.round(img.height * scale);
+          var cv = document.createElement("canvas");
+          cv.width = cw; cv.height = ch;
+          var cx = cv.getContext("2d");
+          cx.fillStyle = "#FFFFFF";
+          cx.fillRect(0, 0, cw, ch);
+          cx.drawImage(img, 0, 0, cw, ch);
+          state.brand.logo = cv.toDataURL("image/png");
+          state.brand.logoRatio = cw / ch;
+          await saveBrand();
+          renderBrand();
+          toast("Logo saved.");
+        };
+        img.onerror = function(){ toast("Couldn't read that image."); };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    $("logo-clear").addEventListener("click", function(){
+      state.brand.logo = null;
+      saveBrand();
+      renderBrand();
+    });
+
+    // --- backup ---
+    $("backup-export").addEventListener("click", exportBackup);
+    $("backup-import").addEventListener("change", function(){
+      var f = $("backup-import").files && $("backup-import").files[0];
+      if(f) importBackup(f);
+      $("backup-import").value = "";
+    });
+  }
+
+  function renderBrand(){
+    var img = $("logo-preview"), clear = $("logo-clear");
+    if(state.brand.logo){
+      img.src = state.brand.logo; img.hidden = false; clear.hidden = false;
+    } else {
+      img.removeAttribute("src"); img.hidden = true; clear.hidden = true;
+    }
+    if(state.brand.signature){
+      var canvas = $("sigpad"), ctx = canvas.getContext("2d");
+      var i = new Image();
+      i.onload = function(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(i,0,0,canvas.width,canvas.height); };
+      i.src = state.brand.signature;
+      $("sig-state").textContent = "Signature saved.";
+    }
+  }
+
+  /* ============================================================
+     10. Tabs + wiring
+     ============================================================ */
+
+  var VIEWS = ["issue","book","due","setup"];
+
+  function selectTab(name){
+    state.view = name;
+    VIEWS.forEach(function(v){
+      $("view-" + v).hidden = (v !== name);
+      $("tab-" + v).setAttribute("aria-selected", v === name ? "true" : "false");
+    });
+    $("actionbar").style.display = (name === "issue") ? "" : "none";
+    window.scrollTo(0, 0);
+  }
+
+  function wire(){
+    VIEWS.forEach(function(v){
+      $("tab-" + v).addEventListener("click", function(){ selectTab(v); });
+    });
+    $("btn-issue").addEventListener("click", issueCertificate);
+    $("btn-reset").addEventListener("click", function(){
+      state.cert = blankCert();
+      writeFormFromState();
+      $("repeat-hint").textContent = "";
+      toast("Cleared.");
+    });
+    $("book-search").addEventListener("input", function(){
+      state.search = $("book-search").value;
+      renderBook();
+    });
+    $("sheet-close").addEventListener("click", closeSheet);
+    $("sheet").addEventListener("click", function(ev){ if(ev.target === $("sheet")) closeSheet(); });
+    document.addEventListener("keydown", function(ev){
+      if(ev.key === "Escape" && !$("sheet").hidden) closeSheet();
+    });
+    bindCustomerFields();
+    bindSetup();
+  }
+
+  /* ============================================================
+     11. Boot
+     ============================================================ */
+
+  writeFormFromState();
+  writeSetupFromState();
+  wire();
+  renderBook();
+  renderDue();
+  selectTab("issue");
+
+  loadEverything();
+  renderBackupState();
+})();
+</script>
